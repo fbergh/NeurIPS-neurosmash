@@ -1,9 +1,11 @@
 import argparse
-from neurosmash import Agent, Environment, Episode
+from neurosmash import Agent, Environment, Episode, QNetwork
 
 
 def main(args):
-    agent = Agent()
+
+    model = QNetwork(n_hidden = args.size * args.size, n_actions = 3)
+    agent = Agent(model = model)
     env = Environment(args.ip, args.port, args.size, args.timescale)
     episode = Episode(env, agent)
     n_episodes_won = 0

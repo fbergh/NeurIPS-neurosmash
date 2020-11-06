@@ -9,6 +9,9 @@ from mxnet.gluon.nn import LeakyReLU
 class Agent:
     def __init__(self, model = None):
         self.model = model
+        if self.model is not None:
+            ctx = mx.cpu()
+            self.model.initialize(ctx = ctx)
         pass
 
     def step(self, end, reward, state):
