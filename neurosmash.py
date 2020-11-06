@@ -1,7 +1,10 @@
 import numpy as np
 import socket
 from PIL import Image
-
+import mxnet as mx
+from mxnet import autograd, gluon, nd, init
+from mxnet.gluon import nn, Block
+from mxnet.gluon.nn import LeakyReLU
 
 class Agent:
     def __init__(self):
@@ -12,6 +15,18 @@ class Agent:
         # return 1 # left
         # return 2 # right
         return 3  # random
+
+
+class QNetwork(gluon.nn.Block):
+
+    def __init__(self, n_hidden, n_actions):
+        super().__init__()
+        self.dense0 = gluon.nn.Dense(n_hidden, activation='relu')
+        self.dense1 = gluon.nn.Dense(n_actions)
+
+    def forward(self, state):
+        state = state.expand_dims(0)
+        return self.dense1(self.dense0(state))
 
 
 class Environment:
