@@ -7,18 +7,22 @@ from mxnet.gluon import nn, Block
 from mxnet.gluon.nn import LeakyReLU
 
 class Agent:
-    def __init__(self):
+    def __init__(self, model = None):
+        self.model = model
         pass
 
     def step(self, end, reward, state):
         # return 0 # nothing
         # return 1 # left
         # return 2 # right
-        return 3  # random
+        # return 3 # random
+        if self.model is not None:
+            return np.argmax(self.model(nd.array(state)).asnumpy())
+        else:
+            return 3
 
 
 class QNetwork(gluon.nn.Block):
-
     def __init__(self, n_hidden, n_actions):
         super().__init__()
         self.dense0 = gluon.nn.Dense(n_hidden, activation='relu')
