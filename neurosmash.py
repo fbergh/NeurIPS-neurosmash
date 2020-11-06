@@ -20,7 +20,8 @@ class Agent:
         # return 2 # right
         # return 3 # random
         if self.model is not None:
-            return np.argmax(self.model(nd.array(state)).asnumpy())
+            actions = nd.softmax(self.model(nd.array(state))).asnumpy()
+            return np.argmax(actions)
         else:
             return 3
 
