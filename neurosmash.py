@@ -28,7 +28,7 @@ class Agent:
     def perturb_weights(self, model, mean=0, sigma=0.05):
         for layer in model.net:
             # Collect current layer weights
-            cur_weights = layer.weight.data()
+            cur_weights = self.get_weights(layer)
 
             # Sample gaussian noise with same shape as layer
             layer_shape = cur_weights.shape
@@ -44,6 +44,8 @@ class Agent:
         initializer = mx.initializer.Constant(new_weights)
         layer.initialize(initializer, force_reinit=True)
 
+    def get_weights(self, layer):
+        return layer.weight.data()
 
 class QNetwork(gluon.nn.Block):
     def __init__(self, n_hidden, n_actions, **kwargs):
