@@ -25,16 +25,38 @@ class Agent:
         else:
             return 3
 
+    def perturb_weights(self, model, mean=0, sigma=0.05):
+        for layer in model.net:
+            # Collect current layer weights
+            cur_weights = layer.weight.data()
+
+            # Sample gaussian noise with same shape as layer
+            layer_shape = cur_weights.shape
+            gaussian_noise = nd.random_normal(mean, sigma, shape=layer_shape)
+
+            # Add gaussian noise to current weights to retrieve new weights
+            new_weights = cur_weights + gaussian_noise
+            # print(new_weights - cur_weights)
+            # Force re-initialization of layer weights
+            self.initialize_weights(layer, new_weights)
+
+    def initialize_weights(self, layer, new_weights):
+        initializer = mx.initializer.Constant(new_weights)
+        layer.initialize(initializer, force_reinit=True)
+
 
 class QNetwork(gluon.nn.Block):
-    def __init__(self, n_hidden, n_actions):
-        super().__init__()
-        self.dense0 = gluon.nn.Dense(n_hidden, activation='relu')
-        self.dense1 = gluon.nn.Dense(n_actions)
+    def __init__(self, n_hidden, n_actions, **kwargs):
+        super(QNetwork, self).__init__(**kwargs)
+        self.net = nn.Sequential()
+        self.net.add(
+            nn.Dense(n_hidden, activation='relu'),
+            nn.Dense(n_actions)
+        )
 
     def forward(self, state):
         state = state.expand_dims(0)
-        return self.dense1(self.dense0(state))
+        return self.net(state)
 
 
 class Environment:
