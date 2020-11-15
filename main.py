@@ -1,13 +1,16 @@
 import argparse
-from neurosmash import Agent, Environment, Episode, QNetwork
+import time
+
+from neurosmash import Environment, Episode
+from network import DenseNet
+from agent import SimpleESAgent
 
 
 def main(args):
-
-    model = QNetwork(n_hidden = args.size * args.size, n_actions = 3)
-    agent = Agent(model = model)
+    model = DenseNet(n_hidden=args.size * args.size, n_actions=3)
+    agent = SimpleESAgent(model=model)
     env = Environment(args.ip, args.port, args.size, args.timescale)
-    episode = Episode(env, agent)
+    episode = Episode(env, agent, t_threshold=args.t_threshold, cooldown=args.cooldown)
     n_episodes_won = 0
 
     for i in range(args.n_episodes):
@@ -17,9 +20,25 @@ def main(args):
             n_episodes_won += 1
         else:
             print(f"Agent lost episode {i + 1}")
-        agent.perturb_weights(model)
+        start_time = time.time()
+        agent.perturb_weights()
+        print(f"Perturbing weights took {time.time() - start_time} sec")
 
     print(f"Won/total: {n_episodes_won}/{args.n_episodes}")
+
+
+def str2bool(v):
+    """
+    For parsing booleans with argparse: https://stackoverflow.com/questions/15008758/parsing-boolean-values-with-argparse
+    """
+    if isinstance(v, bool):
+       return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
 
 
 if __name__ == "__main__":
@@ -33,6 +52,8 @@ if __name__ == "__main__":
 
     # Simulation parameters
     p.add_argument('--n_episodes', type=int, default=10, help="Number of episodes we want to run")
+    p.add_argument('--t_threshold', type=int, default=100, help="Number of timesteps one episode is allowed to run")
+    p.add_argument("--cooldown", type=str2bool, nargs='?', const=True, default=False, help="Run episodes with cooldown")
 
     args = p.parse_args()
 
