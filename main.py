@@ -20,9 +20,7 @@ def main(args):
             n_episodes_won += 1
         else:
             print(f"Agent lost episode {i + 1}")
-        start_time = time.time()
         agent.perturb_weights()
-        print(f"Perturbing weights took {time.time() - start_time} sec")
 
     print(f"Won/total: {n_episodes_won}/{args.n_episodes}")
 
