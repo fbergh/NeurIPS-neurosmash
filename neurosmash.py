@@ -2,63 +2,6 @@ import numpy as np
 import socket
 from PIL import Image
 import mxnet as mx
-from mxnet import autograd, gluon, nd, init
-from mxnet.gluon import nn, Block
-from mxnet.gluon.nn import LeakyReLU
-
-class Agent:
-    def __init__(self, model = None):
-        self.model = model
-        if self.model is not None:
-            ctx = mx.cpu()
-            self.model.initialize(ctx = ctx)
-        pass
-
-    def step(self, end, reward, state):
-        # return 0 # nothing
-        # return 1 # left
-        # return 2 # right
-        # return 3 # random
-        if self.model is not None:
-            actions = nd.softmax(self.model(nd.array(state))).asnumpy()
-            return np.argmax(actions)
-        else:
-            return 3
-
-    def perturb_weights(self, model, mean=0, sigma=0.05):
-        for layer in model.net:
-            # Collect current layer weights
-            cur_weights = self.get_weights(layer)
-
-            # Sample gaussian noise with same shape as layer
-            layer_shape = cur_weights.shape
-            gaussian_noise = nd.random_normal(mean, sigma, shape=layer_shape)
-
-            # Add gaussian noise to current weights to retrieve new weights
-            new_weights = cur_weights + gaussian_noise
-            # print(new_weights - cur_weights)
-            # Force re-initialization of layer weights
-            self.initialize_weights(layer, new_weights)
-
-    def initialize_weights(self, layer, new_weights):
-        initializer = mx.initializer.Constant(new_weights)
-        layer.initialize(initializer, force_reinit=True)
-
-    def get_weights(self, layer):
-        return layer.weight.data()
-
-class QNetwork(gluon.nn.Block):
-    def __init__(self, n_hidden, n_actions, **kwargs):
-        super(QNetwork, self).__init__(**kwargs)
-        self.net = nn.Sequential()
-        self.net.add(
-            nn.Dense(n_hidden, activation='relu'),
-            nn.Dense(n_actions)
-        )
-
-    def forward(self, state):
-        state = state.expand_dims(0)
-        return self.net(state)
 
 
 class Environment:
@@ -107,16 +50,16 @@ class Episode:
 
         # Run entire episode
         while not end:
-            end, reward, state = self.step(end, reward, state)
+            end, reward, state = self.step(reward, state)
         # We have won if the reward is greater than 0
         self.is_win = reward > 0
 
         # Additional steps if we want time for things to settle down
         if self.cooldown:
             for i in range(100):
-                end, reward, state = self.step(end, reward, state)
+                end, reward, state = self.step(reward, state)
 
-    def step(self, end, reward, state):
-        action = self.agent.step(end, reward, state)
+    def step(self, reward, state):
+        action = self.agent.step(reward, state)
         end, reward, state = self.env.step(action)
         return end, reward, state
