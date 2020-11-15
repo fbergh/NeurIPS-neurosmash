@@ -39,9 +39,10 @@ class Environment:
 
 
 class Episode:
-    def __init__(self, environment, agent, cooldown=False):
+    def __init__(self, environment, agent, t_threshold=100, cooldown=False):
         self.env = environment
         self.agent = agent
+        self.t_threshold = t_threshold
         self.cooldown = cooldown
         self.is_win = False
 
@@ -49,8 +50,14 @@ class Episode:
         end, reward, state = self.env.reset()
 
         # Run entire episode
+        t = 0
         while not end:
+            if t > self.t_threshold:
+                self.env.reset()
+                print("Time threshold reached. Stopping early.")
+                break
             end, reward, state = self.step(reward, state)
+            t += 1
         # We have won if the reward is greater than 0
         self.is_win = reward > 0
 
