@@ -31,7 +31,6 @@ class Environment:
         end = data[0]
         reward = data[1]
         state = [data[i] for i in range(2, len(data))]
-
         return end, reward, state
 
     def _send(self, action, command):
@@ -45,6 +44,7 @@ class Episode:
         self.t_threshold = t_threshold
         self.cooldown = cooldown
         self.is_win = False
+        self.end_reward = 0
 
     def run(self):
         end, reward, state = self.env.reset()
@@ -60,6 +60,7 @@ class Episode:
             t += 1
         # We have won if the reward is greater than 0
         self.is_win = reward > 0
+        self.end_reward = reward # store reward at the end of episode
 
         # Additional steps if we want time for things to settle down
         if self.cooldown:
