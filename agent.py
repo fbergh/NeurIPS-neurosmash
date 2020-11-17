@@ -31,7 +31,7 @@ class SimpleESAgent(Agent):
     """
     def __init__(self, model, mean=0, sigma=0.05, ctx=mx.cpu()):
         self.model = model
-        self.model.initialize(ctx=ctx)
+        self.model.initialize(ctx=ctx, force_reinit=True) # Force reinitialization when making new agents
         # Parameters for Gaussian noise
         self.mean = mean
         self.sigma = sigma

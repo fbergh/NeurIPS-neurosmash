@@ -1,28 +1,40 @@
 import argparse
 import time
+import numpy as np
 
 from neurosmash import Environment, Episode
 from network import DenseNet
 from agent import SimpleESAgent
+import algorithm
 
 
 def main(args):
     model = DenseNet(n_hidden=args.size * args.size, n_actions=3)
-    agent = SimpleESAgent(model=model)
     env = Environment(args.ip, args.port, args.size, args.timescale)
-    episode = Episode(env, agent, t_threshold=args.t_threshold, cooldown=args.cooldown)
-    n_episodes_won = 0
+    agent_scores = np.zeros(args.n_agents)
+    agents = np.zeros(args.n_agents)
 
-    for i in range(args.n_episodes):
-        episode.run()
-        if episode.is_win:
-            print(f"Agent won episode {i + 1}")
-            n_episodes_won += 1
-        else:
-            print(f"Agent lost episode {i + 1}")
-        agent.perturb_weights()
+    for agent_id in range(args.n_agents):
+        agent = SimpleESAgent(model=model)
+        episode = Episode(env, agent, t_threshold=args.t_threshold, cooldown=args.cooldown)
+        n_episodes_won = 0
 
-    print(f"Won/total: {n_episodes_won}/{args.n_episodes}")
+        for i in range(args.n_episodes):
+            episode.run()
+            if episode.is_win:
+                print(f"Agent {agent_id} won episode {i + 1}")
+                n_episodes_won += 1
+            else:
+                print(f"Agent {agent_id} lost episode {i + 1}")
+            agent.perturb_weights() # Shouldn't we perturb weights before running all episodes?
+
+        # Save agents and scores
+        agent_scores[agent_id] = n_episodes_won # Maybe change to rewards?
+        # agents[agent_id] = agent # Should save agent somehow
+
+        print(f"Won/total: {n_episodes_won}/{args.n_episodes}")
+
+    print(f"Best agent: {algorithm.pick_best_agent(agent_scores, agents)[0]}")
 
 
 def str2bool(v):
@@ -52,6 +64,9 @@ if __name__ == "__main__":
     p.add_argument('--n_episodes', type=int, default=10, help="Number of episodes we want to run")
     p.add_argument('--t_threshold', type=int, default=100, help="Number of timesteps one episode is allowed to run")
     p.add_argument("--cooldown", type=str2bool, nargs='?', const=True, default=False, help="Run episodes with cooldown")
+
+    # Agent parameters
+    p.add_argument('--n_agents', type=int, default=5, help="Number of agents")
 
     args = p.parse_args()
 
