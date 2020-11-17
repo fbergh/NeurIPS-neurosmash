@@ -15,7 +15,7 @@ def main(args):
     agents = np.zeros(args.n_agents, dtype=object)
 
     for agent_id in range(args.n_agents):
-        agent = RandomAgent()#SimpleESAgent(model=model)
+        agent = SimpleESAgent(model=model)
         episode = Episode(env, agent, t_threshold=args.t_threshold, cooldown=args.cooldown)
         n_episodes_won = 0
         total_rewards = 0
@@ -27,7 +27,7 @@ def main(args):
                 total_rewards += episode.end_reward
             else:
                 print(f"Agent {agent_id} lost episode {i + 1}")
-            # agent.perturb_weights() # Shouldn't we perturb weights before running all episodes?
+            agent.perturb_weights() # Shouldn't we perturb weights before running all episodes?
 
         # Save agents and scores
         agent_scores[agent_id] = total_rewards 
