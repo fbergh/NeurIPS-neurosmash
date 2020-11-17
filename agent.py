@@ -3,6 +3,7 @@ from mxnet import nd
 import numpy as np
 
 import utils as u
+from network import KaimingInit
 
 
 class Agent(object):
@@ -15,14 +16,13 @@ class Agent(object):
 
 class RandomAgent(Agent):
     """
-
+    Agent that always picks a random action
     """
     def __init__(self):
         pass
 
     def step(self, reward, state):
         return 3
-
 
 class SimpleESAgent(Agent):
     """
@@ -31,7 +31,8 @@ class SimpleESAgent(Agent):
     """
     def __init__(self, model, mean=0, sigma=0.05, ctx=mx.cpu()):
         self.model = model
-        self.model.initialize(ctx=ctx, force_reinit=True) # Force reinitialization when making new agents
+        # Force reinitialization when making new agents, use He/Kaiming initialisation
+        self.model.net.initialize(KaimingInit(), force_reinit=True)
         # Parameters for Gaussian noise
         self.mean = mean
         self.sigma = sigma
