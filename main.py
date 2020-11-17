@@ -4,36 +4,37 @@ import numpy as np
 
 from neurosmash import Environment, Episode
 from network import DenseNet
-from agent import SimpleESAgent
+from agent import SimpleESAgent, RandomAgent
 import algorithm
 
 
 def main(args):
-    model = DenseNet(n_hidden=args.size * args.size, n_actions=3)
+    model = DenseNet(n_hidden=args.size * args.size * 3, n_actions=3)
     env = Environment(args.ip, args.port, args.size, args.timescale)
     agent_scores = np.zeros(args.n_agents)
     agents = np.zeros(args.n_agents, dtype=object)
 
     for agent_id in range(args.n_agents):
-        agent = SimpleESAgent(model=model)
+        agent = RandomAgent()#SimpleESAgent(model=model)
         episode = Episode(env, agent, t_threshold=args.t_threshold, cooldown=args.cooldown)
         n_episodes_won = 0
-
+        total_rewards = 0
         for i in range(args.n_episodes):
             episode.run()
             if episode.is_win:
                 print(f"Agent {agent_id} won episode {i + 1}")
                 n_episodes_won += 1
+                total_rewards += episode.end_reward
             else:
                 print(f"Agent {agent_id} lost episode {i + 1}")
-            agent.perturb_weights() # Shouldn't we perturb weights before running all episodes?
+            # agent.perturb_weights() # Shouldn't we perturb weights before running all episodes?
 
         # Save agents and scores
-        agent_scores[agent_id] = n_episodes_won # Maybe change to rewards?
+        agent_scores[agent_id] = total_rewards 
         agents[agent_id] = agent
 
         print(f"Won/total: {n_episodes_won}/{args.n_episodes}")
-
+        print(f"Total agent score: {agent_scores[agent_id]}")
     print(f"Best agent: {algorithm.pick_best_agent(agent_scores, agents)[0]}")
 
 
