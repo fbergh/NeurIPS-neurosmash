@@ -12,7 +12,7 @@ def main(args):
     model = DenseNet(n_hidden=args.size * args.size, n_actions=3)
     env = Environment(args.ip, args.port, args.size, args.timescale)
     agent_scores = np.zeros(args.n_agents)
-    agents = np.zeros(args.n_agents)
+    agents = np.zeros(args.n_agents, dtype=object)
 
     for agent_id in range(args.n_agents):
         agent = SimpleESAgent(model=model)
@@ -30,7 +30,7 @@ def main(args):
 
         # Save agents and scores
         agent_scores[agent_id] = n_episodes_won # Maybe change to rewards?
-        # agents[agent_id] = agent # Should save agent somehow
+        agents[agent_id] = agent
 
         print(f"Won/total: {n_episodes_won}/{args.n_episodes}")
 
