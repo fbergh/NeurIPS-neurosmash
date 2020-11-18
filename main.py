@@ -9,7 +9,8 @@ import algorithm
 
 
 def main(args):
-    model = DenseNet(n_hidden=args.size * args.size * 3, n_actions=3)
+    img_size = args.size * args.size
+    model = DenseNet(n_inputs=3 * img_size, n_hidden=img_size, n_actions=3)
     env = Environment(args.ip, args.port, args.size, args.timescale)
     agent_scores = np.zeros(args.n_agents)
     agents = np.zeros(args.n_agents, dtype=object)

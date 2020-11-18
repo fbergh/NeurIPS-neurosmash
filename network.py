@@ -18,11 +18,11 @@ class KaimingInit(init.Initializer):
 
 
 class DenseNet(gluon.nn.Block):
-    def __init__(self, n_hidden, n_actions, **kwargs):
+    def __init__(self, n_inputs, n_hidden, n_actions, **kwargs):
         super(DenseNet, self).__init__(**kwargs)
         self.net = nn.Sequential()
         self.net.add(
-            nn.Dense(in_units=n_hidden, units=n_hidden, activation='relu'),
+            nn.Dense(in_units=n_inputs, units=n_hidden, activation='relu'),
             nn.Dense(in_units=n_hidden, units=n_actions)
         )
 
