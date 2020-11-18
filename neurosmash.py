@@ -1,7 +1,6 @@
 import numpy as np
 import socket
 from PIL import Image
-import mxnet as mx
 
 
 class Environment:
@@ -43,8 +42,6 @@ class Episode:
         self.agent = agent
         self.t_threshold = t_threshold
         self.cooldown = cooldown
-        self.is_win = False
-        self.end_reward = 0
 
     def run(self):
         end, reward, state = self.env.reset()
@@ -59,13 +56,15 @@ class Episode:
             end, reward, state = self.step(reward, state)
             t += 1
         # We have won if the reward is greater than 0
-        self.is_win = reward > 0
-        self.end_reward = reward # store reward at the end of episode
+        is_win = reward > 0
+        end_reward = reward  # store reward at the end of episode
 
         # Additional steps if we want time for things to settle down
         if self.cooldown:
             for i in range(100):
-                end, reward, state = self.step(reward, state)
+                _ = self.step(reward, state)
+
+        return is_win, end_reward
 
     def step(self, reward, state):
         action = self.agent.step(reward, state)

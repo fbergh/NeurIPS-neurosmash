@@ -21,17 +21,17 @@ def main(args):
         n_episodes_won = 0
         total_rewards = 0
         for i in range(args.n_episodes):
-            episode.run()
-            if episode.is_win:
+            is_win, end_reward = episode.run()
+            if is_win:
                 print(f"Agent {agent_id} won episode {i + 1}")
                 n_episodes_won += 1
-                total_rewards += episode.end_reward
+                total_rewards += end_reward
             else:
                 print(f"Agent {agent_id} lost episode {i + 1}")
-            agent.perturb_weights() # Shouldn't we perturb weights before running all episodes?
+            agent.perturb_weights()
 
         # Save agents and scores
-        agent_scores[agent_id] = total_rewards 
+        agent_scores[agent_id] = total_rewards
         agents[agent_id] = agent
 
         print(f"Won/total: {n_episodes_won}/{args.n_episodes}")
@@ -44,7 +44,7 @@ def str2bool(v):
     For parsing booleans with argparse: https://stackoverflow.com/questions/15008758/parsing-boolean-values-with-argparse
     """
     if isinstance(v, bool):
-       return v
+        return v
     if v.lower() in ('yes', 'true', 't', 'y', '1'):
         return True
     elif v.lower() in ('no', 'false', 'f', 'n', '0'):
