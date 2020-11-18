@@ -16,20 +16,33 @@ def main(args):
     agent_scores = np.zeros(args.n_agents)
     agents = np.zeros(args.n_agents, dtype=object)
 
+    st_agent = time.time()
     for agent_id in range(args.n_agents):
+        print(f"Time for one agent: {time.time() - st_agent} sec")
+        st = time.time()
         agent = SimpleESAgent(model=model, ctx=args.device)
+        print(f"Time init agent: {time.time() - st} sec")
+        st = time.time()
         episode = Episode(env, agent, t_threshold=args.t_threshold, cooldown=args.cooldown)
+        print(f"Time init episode: {time.time() - st} sec")
         n_episodes_won = 0
         total_rewards = 0
+        st_episode = time.time()
         for i in range(args.n_episodes):
+            print(f"Total time for resetting episode: {time.time() - st_episode} sec")
+            st = time.time()
             is_win, end_reward = episode.run()
+            print(f"Time for running episode: {time.time() - st} sec")
             if is_win:
                 print(f"Agent {agent_id} won episode {i + 1}")
                 n_episodes_won += 1
                 total_rewards += end_reward
             else:
                 print(f"Agent {agent_id} lost episode {i + 1}")
+            st = time.time()
             agent.perturb_weights()
+            print(f"Time to perturb weights: {time.time() - st} sec")
+            st_episode = time.time()
 
         # Save agents and scores
         agent_scores[agent_id] = total_rewards
@@ -37,6 +50,7 @@ def main(args):
 
         print(f"Won/total: {n_episodes_won}/{args.n_episodes}")
         print(f"Total agent score: {agent_scores[agent_id]}")
+        st_agent = time.time()
     print(f"Best agent: {algorithm.pick_best_agent(agent_scores, agents)[0]}")
 
 
@@ -76,5 +90,7 @@ if __name__ == "__main__":
                    help="Specifies on which device the neural network of the agent will be run")
 
     args = p.parse_args()
+    print(cuda.num_gpus())
+    print(args.device)
 
     main(args)
