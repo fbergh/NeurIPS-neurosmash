@@ -32,7 +32,7 @@ class SimpleESAgent(Agent):
     def __init__(self, model, mean=0, sigma=0.05, ctx=mx.cpu()):
         self.model = model
         # Force reinitialization when making new agents, use He/Kaiming initialisation
-        self.model.net.initialize(KaimingInit(), force_reinit=True)
+        self.model.net.initialize(KaimingInit(), ctx=ctx, force_reinit=True)
         # Parameters for Gaussian noise
         self.mean = mean
         self.sigma = sigma
@@ -55,3 +55,7 @@ class SimpleESAgent(Agent):
             # print(new_weights - cur_weights)
             # Force re-initialization of layer weights
             u.initialize_weights(layer, new_weights)
+
+if __name__ == "__main__":
+    import mxnet
+    print()
