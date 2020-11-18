@@ -72,7 +72,7 @@ if __name__ == "__main__":
     p.add_argument('--n_agents', type=int, default=5, help="Number of agents")
 
     # Miscellaneous parameters
-    p.add_argument('--device', type=str, default=cuda.cpu() if cuda.num_gpus() else cuda.gpu(0),
+    p.add_argument('--device', type=str, default=cuda.gpu(0) if cuda.num_gpus() else cuda.cpu(),
                    help="Specifies on which device the neural network of the agent will be run")
 
     args = p.parse_args()
