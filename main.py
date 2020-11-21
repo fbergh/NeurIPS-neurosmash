@@ -24,11 +24,11 @@ def main(args):
         for i in range(args.n_episodes):
             is_win, end_reward = episode.run()
             if is_win:
-                print(f"Agent {agent_id} won episode {i + 1}")
+                print(f"Agent {agent_id} won episode {i + 1} and has received reward {end_reward}")
                 n_episodes_won += 1
                 total_rewards += end_reward
             else:
-                print(f"Agent {agent_id} lost episode {i + 1}")
+                print(f"Agent {agent_id} lost episode {i + 1} and has received reward {end_reward}")
             agent.perturb_weights()
 
         # Save agents and scores
