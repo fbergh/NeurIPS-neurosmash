@@ -11,7 +11,7 @@ import algorithm
 
 def main(args):
     img_size = args.size * args.size
-    model = DenseNet(n_inputs=3 * img_size, n_hidden=img_size, n_actions=3)
+    model = DenseNet(n_inputs=args.n_channels * img_size, n_hidden=args.n_hidden, n_actions=3)
     env = Environment(args.ip, args.port, args.size, args.timescale)
     agent_scores = np.zeros(args.n_agents)
     agents = np.zeros(args.n_agents, dtype=object)
@@ -71,6 +71,10 @@ def str2bool(v):
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
 
+    # Network parameters
+    p.add_argument('--n_channels', choices=["1", "2", "3"], default=3)
+    p.add_argument('--n_hidden', type=int, default=128, help="Number of hidden units in network")
+
     # Set-up parameters
     p.add_argument('--ip', type=str, default="127.0.0.1", help="IP address that the TCP/IP interface listens to")
     p.add_argument('--port', type=int, default=13000, help="Port number that the TCP/IP interface listens to")
@@ -90,7 +94,6 @@ if __name__ == "__main__":
                    help="Specifies on which device the neural network of the agent will be run")
 
     args = p.parse_args()
-    print(cuda.num_gpus())
     print(args.device)
 
-    main(args)
+    test(args)
