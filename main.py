@@ -2,17 +2,20 @@ import argparse
 import time
 import numpy as np
 import mxnet.context as cuda
+import matplotlib.pyplot as plt
 
 from neurosmash import Environment, Episode
 from network import DenseNet
 from agent import SimpleESAgent, RandomAgent
+from data import get_preprocess_transform
 import algorithm
 
 
 def main(args):
     img_size = args.size * args.size
     model = DenseNet(n_inputs=args.n_channels * img_size, n_hidden=args.n_hidden, n_actions=3)
-    env = Environment(args.ip, args.port, args.size, args.timescale)
+    preprocess_transform = get_preprocess_transform(args.size, args.n_channels)
+    env = Environment(args.ip, args.port, args.size, args.timescale, transform=preprocess_transform)
     agent_scores = np.zeros(args.n_agents)
     agents = np.zeros(args.n_agents, dtype=object)
 
@@ -96,4 +99,4 @@ if __name__ == "__main__":
     args = p.parse_args()
     print(args.device)
 
-    test(args)
+    main(args)
