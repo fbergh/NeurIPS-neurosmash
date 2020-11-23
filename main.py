@@ -4,14 +4,14 @@ import numpy as np
 import mxnet.context as cuda
 
 from neurosmash import Environment, Episode
-from network import DenseNet
+from network import DenseNet, ConvNet
 from agent import SimpleESAgent, RandomAgent
 import algorithm
 
 
 def main(args):
     img_size = args.size * args.size
-    model = DenseNet(n_inputs=3 * img_size, n_hidden=img_size, n_actions=3)
+    model = ConvNet(n_channels=1, kernel_size=(3,3), n_actions=3)
     env = Environment(args.ip, args.port, args.size, args.timescale)
     agent_scores = np.zeros(args.n_agents)
     agents = np.zeros(args.n_agents, dtype=object)
