@@ -7,44 +7,37 @@ import matplotlib.pyplot as plt
 from neurosmash import Environment, Episode
 from network import DenseNet
 from agent import SimpleESAgent, RandomAgent
-from data import get_preprocess_transform
+from data import Preprocessor, DEFAULT_CROP_RATIO
 import algorithm
 
 
 def main(args):
-    img_size = args.size * args.size
-    model = DenseNet(n_inputs=args.n_channels * img_size, n_hidden=args.n_hidden, n_actions=3)
-    preprocess_transform = get_preprocess_transform(args.size, args.n_channels)
-    env = Environment(args.ip, args.port, args.size, args.timescale, transform=preprocess_transform)
+    crop_values = (0, 0, 0, int(DEFAULT_CROP_RATIO * args.size))
+    width = args.size - crop_values[0] - crop_values[2]
+    height = args.size - crop_values[1] - crop_values[3]
+
+    model = DenseNet(n_inputs=args.n_channels * width * height, n_hidden=args.n_hidden, n_actions=3)
+    preprocessor = Preprocessor(args, crop_values=crop_values)
+    env = Environment(args.ip, args.port, args.size, args.timescale, preprocessor=preprocessor)
     agent_scores = np.zeros(args.n_agents)
     agents = np.zeros(args.n_agents, dtype=object)
 
-    st_agent = time.time()
     for agent_id in range(args.n_agents):
-        print(f"Time for one agent: {time.time() - st_agent} sec")
-        st = time.time()
         agent = SimpleESAgent(model=model, ctx=args.device)
-        print(f"Time init agent: {time.time() - st} sec")
-        st = time.time()
         episode = Episode(env, agent, t_threshold=args.t_threshold, cooldown=args.cooldown)
-        print(f"Time init episode: {time.time() - st} sec")
         n_episodes_won = 0
         total_rewards = 0
         st_episode = time.time()
         for i in range(args.n_episodes):
-            print(f"Total time for resetting episode: {time.time() - st_episode} sec")
-            st = time.time()
             is_win, end_reward = episode.run()
-            print(f"Time for running episode: {time.time() - st} sec")
+            print(f"Time for running episode: {time.time() - st_episode} sec")
             if is_win:
                 print(f"Agent {agent_id} won episode {i + 1}")
                 n_episodes_won += 1
                 total_rewards += end_reward
             else:
                 print(f"Agent {agent_id} lost episode {i + 1}")
-            st = time.time()
             agent.perturb_weights()
-            print(f"Time to perturb weights: {time.time() - st} sec")
             st_episode = time.time()
 
         # Save agents and scores
@@ -53,7 +46,6 @@ def main(args):
 
         print(f"Won/total: {n_episodes_won}/{args.n_episodes}")
         print(f"Total agent score: {agent_scores[agent_id]}")
-        st_agent = time.time()
     print(f"Best agent: {algorithm.pick_best_agent(agent_scores, agents)[0]}")
 
 
@@ -75,8 +67,8 @@ if __name__ == "__main__":
     p = argparse.ArgumentParser()
 
     # Network parameters
-    p.add_argument('--n_channels', choices=["1", "2", "3"], default=3)
-    p.add_argument('--n_hidden', type=int, default=128, help="Number of hidden units in network")
+    p.add_argument('--n_channels', type=int, choices=[1, 2, 3], default=3)
+    p.add_argument('--n_hidden', type=int, default=1024, help="Number of hidden units in network")
 
     # Set-up parameters
     p.add_argument('--ip', type=str, default="127.0.0.1", help="IP address that the TCP/IP interface listens to")
