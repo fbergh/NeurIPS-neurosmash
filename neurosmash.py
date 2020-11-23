@@ -5,13 +5,13 @@ from PIL import Image
 
 
 class Environment:
-    def __init__(self, ip="127.0.0.1", port=13000, size=768, timescale=1, transform=None):
+    def __init__(self, ip="127.0.0.1", port=13000, size=768, timescale=1, preprocessor=None):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.ip = ip
         self.port = port
         self.size = size
         self.timescale = timescale
-        self.transform = transform
+        self.preprocessor = preprocessor
 
         self.client.connect((ip, port))
 
@@ -22,9 +22,6 @@ class Environment:
     def step(self, action):
         self._send(2, action)
         end, reward, state = self._receive()
-        if self.transform is not None:
-            state = self.state2image(state)
-            state = self.transform(nd.array(state))
         return end, reward, state
 
     def state2image(self, state):
@@ -36,6 +33,9 @@ class Environment:
         end = data[0]
         reward = data[1]
         state = [data[i] for i in range(2, len(data))]
+        if self.preprocessor is not None:
+            state = self.state2image(state)
+            state = self.preprocessor.preprocess(nd.array(state))
         return end, reward, state
 
     def _send(self, action, command):
