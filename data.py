@@ -1,68 +1,40 @@
-from mxnet.gluon.nn.basic_layers import HybridBlock, Block
-from mxnet.gluon.data.vision import transforms
-import mxnet.symbol as s
-import mxnet
-from PIL.Image import Image
-
-
 DEFAULT_CROP_RATIO = 28 / 96
 
 
-class Crop(HybridBlock):
-    def __init__(self, crop_values):
-        super(Crop, self).__init__()
-        self.left, self.top, self.right, self.bottom = crop_values
-        if self.bottom == 0:
-            self.bottom = None
-        if self.right == 0:
-            self.right = None
-        assert not self.left == self.right and not self.top == self.bottom, "Crop values cannot be equal"
+class Preprocessor:
+    def __init__(self, args, crop_values):
+        self.left, self.top, self.right, self.bottom = self._get_crop_values(crop_values)
+        self.channels_to_keep = self._get_channels_to_keep(args.n_channels)
 
-    def hybrid_forward(self, F, x, *args, **kwargs):
-        if isinstance(x, Image):
-            raise Exception("Cannot crop PIL image")
-        if self.bottom is None:
-            x = x[self.top:]
-        else:
-            x = x[self.top:-self.bottom]
-        if self.right is None:
-            x = x[:, self.left:]
-        else:
-            x = x[self.left:-self.right]
-        return x
+    def preprocess(self, img):
+        img = img / 255
+        img = self._reduce_channels(img)
+        img = self._crop(img)
+        return img
 
+    def _get_crop_values(self, crop_values):
+        left, top, right, bottom = crop_values
+        if bottom == 0:
+            bottom = None
+        if right == 0:
+            right = None
+        assert not left == right and not top == bottom, "Crop values cannot be equal"
+        return left, top, right, bottom
 
-class ReduceChannels(HybridBlock):
-    def __init__(self, to_keep):
-        super(ReduceChannels, self).__init__()
-        self.to_keep = to_keep#mxnet.ndarray.array(to_keep)
+    def _get_channels_to_keep(self, n_channels):
+        channels_to_keep = [0, 1, 2]
+        if n_channels == 1:
+            # Keep red channel
+            channels_to_keep = [0]
+        elif n_channels == 2:
+            # Keep red and blue channel
+            channels_to_keep = [0, 2]
+        return channels_to_keep
 
-    def hybrid_forward(self, F, x, *args, **kwargs):
-        if isinstance(x, Image):
-            raise Exception("Cannot crop PIL image")
-        # Use function space F to take to_keep channels on the channel axis
-        return F.take(a=x, indices=s.Symbol(self.to_keep), axis=2)
+    def _reduce_channels(self, img):
+        return img[:, :, self.channels_to_keep]
 
-
-def get_preprocess_transform(img_size, n_channels):
-    """
-    Normalises and crops image.
-    Optionally reduces the number of channels as specified by n_channels
-    """
-    channels_to_keep = [0, 1, 2]
-    if n_channels == 1:
-        # Keep red channel
-        channels_to_keep = [0]
-    elif n_channels == 2:
-        # Keep red and blue channel
-        channels_to_keep = [0, 2]
-
-    preprocess = transforms.Compose([
-        # Convert PIL to tensor and normalise from [0,255] to [0,1]
-        transforms.ToTensor(),
-        ReduceChannels(channels_to_keep),
-        # Crop ratio ensures that varying image sizes don't matter
-        Crop((0, int(img_size * DEFAULT_CROP_RATIO), 0, 0))
-    ])
-
-    return preprocess
+    def _crop(self, img):
+        img = img[self.top:-self.bottom] if self.bottom is not None else img[self.top:]
+        img = img[:, self.left:-self.right] if self.right is not None else img[:, self.left:]
+        return img
