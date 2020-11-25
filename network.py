@@ -12,6 +12,7 @@ class KaimingInit(init.Initializer):
         super(KaimingInit, self).__init__(**kwargs)
 
     def _init_weight(self, name, data):
+        print(f"Initialising layer {name}")
         data[:] = random.normal(shape=data.shape)
         n_units_in = data.shape[0]
         data *= math.sqrt(2./n_units_in)
@@ -39,10 +40,13 @@ class ConvNet(gluon.nn.Block):
         super(ConvNet, self).__init__(**kwargs)
         self.net = nn.Sequential()
         self.net.add(
-            nn.Conv2D(channels = n_channels,kernel_size = kernel_size, activation='relu'),
+            nn.Conv2D(channels=n_channels, kernel_size=kernel_size, activation='relu'),
             nn.Dense(units=n_actions)
         )
 
     def forward(self, state):
+        # Convert state shape (w, h, c) to (c, w, h)
+        state = nd.transpose(state, axes=(2, 0, 1))
+        # Add extra batch dimension (1, c, w, h)
         state = state.expand_dims(0)
         return nd.softmax(self.net(state))
