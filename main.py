@@ -5,7 +5,7 @@ import mxnet.context as cuda
 import matplotlib.pyplot as plt
 
 from neurosmash import Environment, Episode
-from network import DenseNet
+from network import DenseNet, ConvNet
 from agent import SimpleESAgent, RandomAgent
 from data import Preprocessor, DEFAULT_CROP_RATIO
 import algorithm
@@ -17,6 +17,7 @@ def main(args):
     height = args.size - crop_values[1] - crop_values[3]
 
     model = DenseNet(n_inputs=args.n_channels * width * height, n_hidden=args.n_hidden, n_actions=3)
+#     model = ConvNet(n_channels=args.n_channels, kernel_size=(3,3), n_actions=3)
     preprocessor = Preprocessor(args, crop_values=crop_values)
     env = Environment(args.ip, args.port, args.size, args.timescale, preprocessor=preprocessor)
     agent_scores = np.zeros(args.n_agents)
@@ -32,11 +33,11 @@ def main(args):
             is_win, end_reward = episode.run()
             print(f"Time for running episode: {time.time() - st_episode} sec")
             if is_win:
-                print(f"Agent {agent_id} won episode {i + 1}")
+                print(f"Agent {agent_id} won episode {i + 1} and has received reward {end_reward}")
                 n_episodes_won += 1
                 total_rewards += end_reward
             else:
-                print(f"Agent {agent_id} lost episode {i + 1}")
+                print(f"Agent {agent_id} lost episode {i + 1} and has received reward {end_reward}")
             agent.perturb_weights()
             st_episode = time.time()
 

@@ -61,8 +61,9 @@ class Episode:
                 break
             end, reward, state = self.step(reward, state)
             t += 1
-        # We have won if the reward is greater than 0
-        is_win = reward > 0
+        reward = self.determine_reward(reward,state, t)
+        # We have won if the reward is 10, a loss might have reward < 10 but > 0
+        is_win = reward == 10 
         end_reward = reward  # store reward at the end of episode
 
         # Additional steps if we want time for things to settle down
@@ -73,6 +74,19 @@ class Episode:
         return is_win, end_reward
 
     def step(self, reward, state):
-        action = self.agent.step(reward, state)
+        image_state = self.env.state2image(state)
+        action = self.agent.step(reward, image_state)
         end, reward, state = self.env.step(action)
         return end, reward, state
+
+    # Determines whether Agent should get a small reward even though the Agent has lost
+    def determine_reward(self, reward, state, time_elapsed):
+        determined_reward = 5
+
+        if (reward == 10): #agent has won..
+            return reward
+        else:
+            return determined_reward * (time_elapsed/self.t_threshold)
+
+
+

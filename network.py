@@ -33,3 +33,16 @@ class DenseNet(gluon.nn.Block):
         # Add extra batch dimension
         state = state.expand_dims(0)
         return nd.softmax(self.net(state))
+
+class ConvNet(gluon.nn.Block):
+    def __init__(self, n_channels, kernel_size, n_actions, **kwargs):
+        super(ConvNet, self).__init__(**kwargs)
+        self.net = nn.Sequential()
+        self.net.add(
+            nn.Conv2D(channels = n_channels,kernel_size = kernel_size, activation='relu'),
+            nn.Dense(units=n_actions)
+        )
+
+    def forward(self, state):
+        state = state.expand_dims(0)
+        return nd.softmax(self.net(state))
