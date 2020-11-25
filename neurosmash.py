@@ -74,8 +74,7 @@ class Episode:
         return is_win, end_reward
 
     def step(self, reward, state):
-        image_state = self.env.state2image(state)
-        action = self.agent.step(reward, image_state)
+        action = self.agent.step(reward, state)
         end, reward, state = self.env.step(action)
         return end, reward, state
 
