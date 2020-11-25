@@ -27,6 +27,10 @@ class DenseNet(gluon.nn.Block):
         )
 
     def forward(self, state):
+        # If input is an image, flatten the image to a state vector
+        if len(state.shape) == 3:
+            state = state.flatten()
+        # Add extra batch dimension
         state = state.expand_dims(0)
         return nd.softmax(self.net(state))
 

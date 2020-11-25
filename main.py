@@ -2,17 +2,24 @@ import argparse
 import time
 import numpy as np
 import mxnet.context as cuda
+import matplotlib.pyplot as plt
 
 from neurosmash import Environment, Episode
 from network import DenseNet, ConvNet
 from agent import SimpleESAgent, RandomAgent
+from data import Preprocessor, DEFAULT_CROP_RATIO
 import algorithm
 
 
 def main(args):
-    img_size = args.size * args.size
-    model = ConvNet(n_channels=1, kernel_size=(3,3), n_actions=3)
-    env = Environment(args.ip, args.port, args.size, args.timescale)
+    crop_values = (0, 0, 0, int(DEFAULT_CROP_RATIO * args.size))
+    width = args.size - crop_values[0] - crop_values[2]
+    height = args.size - crop_values[1] - crop_values[3]
+
+    model = DenseNet(n_inputs=args.n_channels * width * height, n_hidden=args.n_hidden, n_actions=3)
+#     model = ConvNet(n_channels=args.n_channels, kernel_size=(3,3), n_actions=3)
+    preprocessor = Preprocessor(args, crop_values=crop_values)
+    env = Environment(args.ip, args.port, args.size, args.timescale, preprocessor=preprocessor)
     agent_scores = np.zeros(args.n_agents)
     agents = np.zeros(args.n_agents, dtype=object)
 
@@ -21,8 +28,10 @@ def main(args):
         episode = Episode(env, agent, t_threshold=args.t_threshold, cooldown=args.cooldown)
         n_episodes_won = 0
         total_rewards = 0
+        st_episode = time.time()
         for i in range(args.n_episodes):
             is_win, end_reward = episode.run()
+            print(f"Time for running episode: {time.time() - st_episode} sec")
             if is_win:
                 print(f"Agent {agent_id} won episode {i + 1} and has received reward {end_reward}")
                 n_episodes_won += 1
@@ -30,6 +39,7 @@ def main(args):
             else:
                 print(f"Agent {agent_id} lost episode {i + 1} and has received reward {end_reward}")
             agent.perturb_weights()
+            st_episode = time.time()
 
         # Save agents and scores
         agent_scores[agent_id] = total_rewards
@@ -57,6 +67,10 @@ def str2bool(v):
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
 
+    # Network parameters
+    p.add_argument('--n_channels', type=int, choices=[1, 2, 3], default=3)
+    p.add_argument('--n_hidden', type=int, default=1024, help="Number of hidden units in network")
+
     # Set-up parameters
     p.add_argument('--ip', type=str, default="127.0.0.1", help="IP address that the TCP/IP interface listens to")
     p.add_argument('--port', type=int, default=13000, help="Port number that the TCP/IP interface listens to")
@@ -76,5 +90,6 @@ if __name__ == "__main__":
                    help="Specifies on which device the neural network of the agent will be run")
 
     args = p.parse_args()
+    print(args.device)
 
     main(args)
