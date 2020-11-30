@@ -5,13 +5,15 @@ from PIL import Image
 
 
 class Environment:
-    def __init__(self, ip="127.0.0.1", port=13000, size=768, timescale=1, preprocessor=None):
+    def __init__(self, ip="127.0.0.1", port=13000, size=768, timescale=1, width = 96, height = 96, preprocessor=None):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.ip = ip
         self.port = port
         self.size = size
         self.timescale = timescale
         self.preprocessor = preprocessor
+        self.width = width
+        self.height = height
 
         self.client.connect((ip, port))
 

@@ -16,10 +16,10 @@ def main(args):
     width = args.size - crop_values[0] - crop_values[2]
     height = args.size - crop_values[1] - crop_values[3]
 
-    model = DenseNet(n_inputs=args.n_channels * width * height, n_hidden=args.n_hidden, n_actions=3)
-#     model = ConvNet(n_channels=args.n_channels, kernel_size=(3,3), n_actions=3)
+    #model = DenseNet(n_inputs=args.n_channels * width * height, n_hidden=args.n_hidden, n_actions=3)
+    model = ConvNet(n_channels=args.n_channels, kernel_size=(3,3), n_actions=3)
     preprocessor = Preprocessor(args, crop_values=crop_values)
-    env = Environment(args.ip, args.port, args.size, args.timescale, preprocessor=preprocessor)
+    env = Environment(args.ip, args.port, args.size, args.timescale, width=width, height=height, preprocessor=preprocessor)
     agent_scores = np.zeros(args.n_agents)
     agents = np.zeros(args.n_agents, dtype=object)
 

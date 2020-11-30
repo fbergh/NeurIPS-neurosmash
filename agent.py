@@ -38,23 +38,25 @@ class SimpleESAgent(Agent):
         self.sigma = sigma
 
     def step(self, reward, state):
-        actions_probabilities = self.model(nd.array(state)).asnumpy()
+        actions_probabilities = self.model(state).asnumpy()
+        #actions_probabilities = self.model(nd.array(state)).asnumpy()
         return np.argmax(actions_probabilities)
 
     def perturb_weights(self):
         for layer in self.model.net:
-            # Collect current layer weights
-            cur_weights = u.get_weights(layer)
+            if not layer.prefix.startswith('pool'):
+                # Collect current layer weights
+                cur_weights = u.get_weights(layer)
 
-            # Sample gaussian noise with same shape as layer
-            layer_shape = cur_weights.shape
-            gaussian_noise = nd.random_normal(self.mean, self.sigma, shape=layer_shape)
+                # Sample gaussian noise with same shape as layer
+                layer_shape = cur_weights.shape
+                gaussian_noise = nd.random_normal(self.mean, self.sigma, shape=layer_shape)
 
-            # Add gaussian noise to current weights to retrieve new weights
-            new_weights = cur_weights + gaussian_noise
-            # print(new_weights - cur_weights)
-            # Force re-initialization of layer weights
-            u.initialize_weights(layer, new_weights)
+                # Add gaussian noise to current weights to retrieve new weights
+                new_weights = cur_weights + gaussian_noise
+                # print(new_weights - cur_weights)
+                # Force re-initialization of layer weights
+                u.initialize_weights(layer, new_weights)
 
 if __name__ == "__main__":
     import mxnet
