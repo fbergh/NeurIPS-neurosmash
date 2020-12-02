@@ -1,10 +1,7 @@
-DEFAULT_CROP_RATIO = 28 / 96
-
-
 class Preprocessor:
-    def __init__(self, args, crop_values):
-        self.left, self.top, self.right, self.bottom = self._get_crop_values(crop_values)
-        self.channels_to_keep = self._get_channels_to_keep(args.n_channels)
+    def __init__(self, n_channels, crop_values):
+        self.left, self.top, self.right, self.bottom = self._cleanup_crop_values(crop_values)
+        self.channels_to_keep = self._get_channels_to_keep(n_channels)
 
     def preprocess(self, img):
         img = img / 255
@@ -12,13 +9,13 @@ class Preprocessor:
         img = self._crop(img)
         return img
 
-    def _get_crop_values(self, crop_values):
+    def _cleanup_crop_values(self, crop_values):
         left, top, right, bottom = crop_values
-        if bottom == 0:
+        if bottom == 0: 
             bottom = None
-        if right == 0:
+        if right == 0: 
             right = None
-        assert not left == right and not top == bottom, "Crop values cannot be equal"
+        assert not left ==  right and not  top ==  bottom, "Crop values cannot be equal"
         return left, top, right, bottom
 
     def _get_channels_to_keep(self, n_channels):
@@ -35,6 +32,6 @@ class Preprocessor:
         return img[:, :, self.channels_to_keep]
 
     def _crop(self, img):
-        img = img[self.top:-self.bottom] if self.bottom is not None else img[self.top:]
-        img = img[:, self.left:-self.right] if self.right is not None else img[:, self.left:]
+        img = img[self.top:-self.bottom] if self.bottom else img[self.top:]
+        img = img[:, self.left:-self.right] if self.right else img[:, self.left:]
         return img
