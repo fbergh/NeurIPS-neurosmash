@@ -2,19 +2,23 @@ import numpy as np
 from mxnet import nd
 from networks import DenseNet
 from agents import ESAgent
+from logger import Logger
 
 class ESAlgorithm:
 
-    def __init__(self, episode, agent_type, agent_params, mutation_lr, min_mutation_step, initial_mutation_step):
+    def __init__(self, episode, agent_type, agent_params, mutation_lr, min_mutation_step, initial_mutation_step, filename):
         self.episode = episode # Episode instance can be used repeatedly for different agents
         self.agent_type = agent_type # Which type of agent to use
         self.agent_params = agent_params # Parameters required to create new agents
         self.mutation_lr = mutation_lr # Learning rate for mutations
         self.min_mutation_step = min_mutation_step # Minimum step size for mutations
         self.initial_mutation_step = initial_mutation_step # Initial step size for mutations
+        self.filename = filename
 
     def run(self, n_gens, gen_size, n_iters, do_mutation=True, do_crossover=True):
+        # log = Logger(self.filename)
         do_mutation = False
+
         # Initialize table to store agents (+1 to account for gen 0)   
         self.generations = np.zeros((n_gens+1, gen_size)).astype(ESAgent) 
 
@@ -29,12 +33,14 @@ class ESAlgorithm:
             for i, agent in enumerate(self.generations[gen]):
                 print(f"Running agent {i+1}")
                 agent.reward, agent.wins = self.run_agent(agent, n_iters)
+                # log.log_rewards(gen, i, agent.reward)
                 print(f"Agent {i+1} won {agent.wins} times (reward: {agent.reward:.3f})")
             # Print performance of current generation
             self.print_performance(gen)
             # Generate the next generation if necessary
             if gen != n_gens:
                 self.generations[gen+1] = self.create_generation(self.generations[gen], do_mutation, do_crossover)
+        # log.close()
 
     def run_agent(self, agent, n_iterations):
         # Run a given agent for a given number of iterations, keeping track of reward and number of wins

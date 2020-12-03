@@ -25,7 +25,7 @@ def main(args):
                     "n_channels":args.n_channels, 
                     "kernel_size":(args.kernel_size,args.kernel_size)}
     agent_type = ConvESAgent if args.agent_type == "conv" else DenseESAgent
-    algorithm = ESAlgorithm(episode, agent_type, agent_params, args.mutation_lr, args.min_mutation_step, args.initial_mutation_step)
+    algorithm = ESAlgorithm(episode, agent_type, agent_params, args.mutation_lr, args.min_mutation_step, args.initial_mutation_step, args.filename)
 
     # Run algorithm
     algorithm.run(args.n_generations, args.gen_size, args.iter_per_agent, args.do_mutation, args.do_crossover)
@@ -66,6 +66,9 @@ if __name__ == "__main__":
     p.add_argument('--initial_mutation_step', type=float, default=0.25, help="Initial step size for mutations")
     p.add_argument('--do_mutation', type=str2bool, nargs='?', const=True, default=True, help="Use mutation when creating children")
     p.add_argument('--do_crossover', type=str2bool, nargs='?', const=True, default=True, help="Use crossover when creating children")
+
+    # Log parameters
+    p.add_argument('--filename', type=str, default="output.json", help="Filename of json output file")
 
     # Miscellaneous parameters
     p.add_argument('--device', type=str, default=cuda.gpu(0) if cuda.num_gpus() else cuda.cpu(),
