@@ -25,10 +25,10 @@ def main(args):
                     "n_channels":args.n_channels, 
                     "kernel_size":(args.kernel_size,args.kernel_size)}
     agent_type = ConvESAgent if args.agent_type == "conv" else DenseESAgent
-    algorithm = ESAlgorithm(episode, agent_type, agent_params, args.mutation_lr, args.min_mutation_step, args.initial_mutation_step, args.filename)
+    algorithm = ESAlgorithm(episode, agent_type, agent_params, args.iter_per_agent, args.mutation_lr, args.min_mutation_step, args.initial_mutation_step, args.filename)
 
     # Run algorithm
-    algorithm.run(args.n_generations, args.gen_size, args.iter_per_agent, args.do_mutation, args.do_crossover)
+    algorithm.run(args.n_generations, args.gen_size,  args.do_mutation, args.do_crossover)
 
 def str2bool(v):
     # Parse booleans obtained using argparse
