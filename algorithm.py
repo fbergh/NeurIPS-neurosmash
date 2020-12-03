@@ -6,7 +6,7 @@ from logger import Logger
 
 class ESAlgorithm:
 
-    def __init__(self, episode, agent_type, agent_params, mutation_lr, min_mutation_step, initial_mutation_step, filename):
+    def __init__(self, episode, agent_type, agent_params, iter_per_agent , mutation_lr, min_mutation_step, initial_mutation_step, filename):
         self.episode = episode # Episode instance can be used repeatedly for different agents
         self.agent_type = agent_type # Which type of agent to use
         self.agent_params = agent_params # Parameters required to create new agents
@@ -14,8 +14,11 @@ class ESAlgorithm:
         self.min_mutation_step = min_mutation_step # Minimum step size for mutations
         self.initial_mutation_step = initial_mutation_step # Initial step size for mutations
         self.filename = filename
+        self.iter_per_agent = iter_per_agent 
+        self.max_reward = iter_per_agent * 10
 
-    def run(self, n_gens, gen_size, n_iters, do_mutation=True, do_crossover=True):
+    def run(self, n_gens, gen_size, do_mutation=True, do_crossover=True):
+        n_iters = self.iter_per_agent
         # log = Logger(self.filename)
         do_mutation = False
 
@@ -117,11 +120,14 @@ class ESAlgorithm:
 
     def get_mutation_step(self, parents):
         parent_rewards = [parent.reward for parent in parents]
-        reward_fraction = 1/np.average(parent_rewards) 
-        # Chihab: max_reward is niet meer handig berekenbaar nu, maar aangezien dat een fixed value is (scalar multiple van reward_fraction) zou dit ook moeten werken 
-        # Mutation step size wordt hier berekend (op basis van die van parents en hun rewards), en wordt in de procreate functie meegegeven aan child
-        # Voor nu return ik even 0.25, maar hier kun je dus je ding doen
-        return 0.25
+        reward_fraction = self.max_reward / np.average(parent_rewards) 
+        parent_mutation_steps = [parent.mutation_step for parent in parents]
+        new_mutation_step = np.average(parent_mutation_steps) * np.exp(self.mutation_lr * np.random.normal(0,1)) * reward_fraction
+
+        if new_mutation_step < self.min_mutation_step:
+            new_mutation_step = self.min_mutation_step
+            
+        return new_mutation_step
 
     def print_performance(self, gen_idx):
         gen_wins = [agent.wins for agent in self.generations[gen_idx]]
