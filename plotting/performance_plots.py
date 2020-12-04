@@ -23,25 +23,54 @@ def extract_reward_data(filename):
     return generation, average_reward, min_reward, max_reward
 
 
+def extract_win_data(filename):
+    with open(filename, 'r') as openfile:
+        output = json.load(openfile)
+
+    performance = output["performance"]
+    generation = []
+    average_wins = []
+
+    for gen in performance:
+        generation.append(gen["generation"])
+        average_wins.append(np.average(gen["wins"]))
+
+    return generation, average_wins
+
+
 def plot_average_rewards(filename):
     generation, average_reward, min_reward, max_reward = extract_reward_data(filename)
-    plt.plot(generation, average_reward)
-    plt.fill_between(generation, min_reward, max_reward, alpha = 0.1)
-    plt.xlabel("Generation")
-    plt.ylabel("Average Reward")
-    plt.xticks(generation, generation)
-    plt.savefig("./../plots/average_rewards.png")
+    fig, ax = plt.subplots()
+    ax.plot(generation, average_reward)
+    ax.fill_between(generation, min_reward, max_reward, alpha = 0.1)
+    ax.set_xlabel("Generation")
+    ax.set_ylabel("Average Reward")
+    ax.set_xticks(generation, generation)
+    fig.savefig("./../plots/average_rewards.png")
 
 
 def plot_cumulative_rewards(filename):
     generation, average_reward, _, _ = extract_reward_data(filename)
     cum_reward = np.cumsum(average_reward)
-    plt.plot(generation, cum_reward)
-    plt.xlabel("Generation")
-    plt.ylabel("Cumulative Reward")
-    plt.xticks(generation, generation)
-    plt.savefig("./../plots/cumulative_rewards.png")
+    fig, ax = plt.subplots()
+    ax.plot(generation, cum_reward)
+    ax.set_xlabel("Generation")
+    ax.set_ylabel("Cumulative Reward")
+    ax.set_xticks(generation, generation)
+    fig.savefig("./../plots/cumulative_rewards.png")
 
 
-plot_average_rewards('./../logs/output.json')
-plot_cumulative_rewards('./../logs/output.json')
+def plot_average_wins(filename):
+    generation, average_wins = extract_win_data(filename)
+    fig, ax = plt.subplots()
+    ax.plot(generation, average_wins)
+    ax.set_xlabel("Generation")
+    ax.set_ylabel("Average #Wins")
+    ax.set_xticks(generation, generation)
+    fig.savefig("./../plots/average_wins.png")
+
+
+performance_logs = "./../logs/output.json"
+plot_average_rewards(performance_logs)
+plot_cumulative_rewards(performance_logs)
+plot_average_wins(performance_logs)
