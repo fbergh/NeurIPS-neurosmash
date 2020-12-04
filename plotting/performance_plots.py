@@ -38,6 +38,28 @@ def extract_win_data(filename):
     return generation, average_wins
 
 
+def extract_action_data(filename):
+    with open(filename, 'r') as openfile:
+        output = json.load(openfile)
+
+    performance = output["performance"]
+    generation = []
+    actions = []
+    action_proportions = []
+
+    for gen in performance:
+        generation.append(gen["generation"])
+        actions = list(gen["actions"][0].keys())
+        gen_actions = []
+
+        for i in gen["actions"]:
+            gen_actions.append(list(i.values()))
+
+        action_proportions.append((np.mean(gen_actions, axis=0)))
+
+    return generation, actions, action_proportions
+
+
 def plot_average_rewards(filename):
     generation, average_reward, min_reward, max_reward = extract_reward_data(filename)
     fig, ax = plt.subplots()
@@ -70,7 +92,28 @@ def plot_average_wins(filename):
     fig.savefig("./../plots/average_wins.png")
 
 
+def plot_action_proportions(filename):
+    generation, actions, action_proportions = extract_action_data(filename)
+    action_proportions = np.asarray(action_proportions)
+
+    fig, ax = plt.subplots()
+
+    for i in range(action_proportions.shape[1]):
+        if i == 0 :
+            ax.bar(generation, action_proportions[:, i])
+            prev = action_proportions[:, i]
+        else:
+            ax.bar(generation, action_proportions[:, i], bottom=prev)
+            prev += action_proportions[:, i]
+
+    ax.set_xlabel("Generation")
+    ax.set_ylabel("Action Proportions")
+    ax.set_xticks(generation, generation)
+    fig.savefig("./../plots/action_proportions.png")
+
+
 performance_logs = "./../logs/output.json"
 plot_average_rewards(performance_logs)
 plot_cumulative_rewards(performance_logs)
 plot_average_wins(performance_logs)
+plot_action_proportions(performance_logs)

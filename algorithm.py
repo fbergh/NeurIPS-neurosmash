@@ -46,7 +46,6 @@ class ESAlgorithm:
                 self.generations[gen+1] = self.create_generation(self.generations[gen], do_mutation, do_crossover)
         log.close()
 
-
     def run_agent(self, agent, n_iterations):
         # Run a given agent for a given number of iterations, keeping track of reward and number of wins
         total_reward = 0
