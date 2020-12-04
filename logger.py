@@ -13,11 +13,9 @@ class Logger:
     def log_performance(self, gen, gen_idx):
         wins = [agent.wins for agent in gen[gen_idx]]
         rewards = [agent.reward for agent in gen[gen_idx]]
-        actions = [agent.get_action_proportions() for agent in gen[gen_idx]]
         performance = {"generation": gen_idx,
                        "rewards": rewards,
-                       "wins": wins,
-                       "actions": actions}
+                       "wins": wins}
 
         self.log["performance"].append(performance)
 

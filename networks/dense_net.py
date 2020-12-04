@@ -1,13 +1,13 @@
-from mxnet import nd, gluon
+from .network import Network
+from mxnet import nd
 from mxnet.gluon import nn
 
-class DenseNet(nn.Block):
-    def __init__(self, n_inputs, n_hidden, n_actions, **kwargs):
-        super(DenseNet, self).__init__(**kwargs)
-        self.net = nn.Sequential()
+class DenseNet(Network):
+    def __init__(self, params, **kwargs):
+        super().__init__(**kwargs)
         self.net.add(
-            nn.Dense(in_units=n_inputs, units=n_hidden, activation='relu'),
-            nn.Dense(in_units=n_hidden, units=n_actions)
+            nn.Dense(in_units=params["n_inputs"], units=params["n_hidden"], activation='relu'),
+            nn.Dense(in_units=params["n_hidden"], units=params["n_actions"])
         )
 
     def forward(self, state):

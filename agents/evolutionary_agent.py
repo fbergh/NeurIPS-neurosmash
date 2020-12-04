@@ -1,22 +1,20 @@
-from .es_agent import ESAgent
+from .agent import Agent
 from .agent_utils import get_layer_weights, set_layer_weights
-from networks import KaimingInit, ConvNet
+from networks import KaimingInit
 import mxnet as mx
 from mxnet import nd
 import numpy as np
 
-class ConvESAgent(ESAgent):
-    """
-    Simple agent that takes the best action according to its network
-    This agent has functions for getting and setting the weights in its netork
-    """
-    def __init__(self, params, mutation_step, weights=None, ctx=mx.cpu()):
-        super().__init__(mutation_step)
-        self.model = ConvNet(params["n_channels"], params["kernel_size"], n_actions=3)
+class EvolutionaryAgent(Agent):
+    """ Evolutionary Strategy Agent class """
+    def __init__(self, model, model_params, mutation_step, weights=None, ctx=mx.cpu()):
+        super().__init__()
+        self.mutation_step = mutation_step
+        self.model = model(model_params)
         self.model.net.initialize(KaimingInit(), ctx=ctx, force_reinit=True)
         if weights:
             self.set_weights(weights)
-
+        
     def step(self, end, reward, state):
         actions_probabilities = self.model(nd.array(state)).asnumpy()
         action = np.argmax(actions_probabilities)

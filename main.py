@@ -20,10 +20,11 @@ def main(args):
     episode = Episode(environment, t_threshold=args.t_threshold, cooldown=args.cooldown)
     
     # Initialize algorithm
-    agent_params = {"img_shape": (width,height), 
+    agent_params = {"n_inputs":width*height*args.n_channels, 
                     "n_hidden":args.n_hidden, 
                     "n_channels":args.n_channels, 
-                    "kernel_size":(args.kernel_size,args.kernel_size)}
+                    "kernel_size":(args.kernel_size,args.kernel_size),
+                    "n_actions":3}
     agent_type = ConvESAgent if args.agent_type == "conv" else DenseESAgent
     algorithm = ESAlgorithm(episode, agent_type, agent_params, args.iter_per_agent, args.mutation_lr, args.min_mutation_step, args.initial_mutation_step, args.filename)
 
