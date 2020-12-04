@@ -19,7 +19,7 @@ class ESAlgorithm:
 
     def run(self, n_gens, gen_size, do_mutation=True, do_crossover=True):
         n_iters = self.iter_per_agent
-        # log = Logger(self.filename)
+        log = Logger(self.filename)
         do_mutation = False
 
         # Initialize table to store agents (+1 to account for gen 0)   
@@ -36,15 +36,16 @@ class ESAlgorithm:
             for i, agent in enumerate(self.generations[gen]):
                 print(f"Running agent {i+1}")
                 agent.reward, agent.wins = self.run_agent(agent, n_iters)
-                # log.log_rewards(gen, i, agent.reward)
                 print(f"Action proportions of agent {i+1}: {agent.get_action_proportions()}")
                 print(f"Agent {i+1} won {agent.wins} times (reward: {agent.reward:.3f})")
             # Print performance of current generation
             self.print_performance(gen)
+            log.log_performance(self.generations, gen)
             # Generate the next generation if necessary
             if gen != n_gens:
                 self.generations[gen+1] = self.create_generation(self.generations[gen], do_mutation, do_crossover)
-        # log.close()
+        log.close()
+
 
     def run_agent(self, agent, n_iterations):
         # Run a given agent for a given number of iterations, keeping track of reward and number of wins
