@@ -19,7 +19,9 @@ class ConvESAgent(ESAgent):
 
     def step(self, end, reward, state):
         actions_probabilities = self.model(nd.array(state)).asnumpy()
-        return np.argmax(actions_probabilities)
+        action = np.argmax(actions_probabilities)
+        self.action_counter[action] += 1
+        return action
 
     def get_weights(self):
         weights = []

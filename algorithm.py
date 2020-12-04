@@ -37,6 +37,7 @@ class ESAlgorithm:
                 print(f"Running agent {i+1}")
                 agent.reward, agent.wins = self.run_agent(agent, n_iters)
                 # log.log_rewards(gen, i, agent.reward)
+                print(f"Action proportions of agent {i+1}: {agent.get_action_proportions()}")
                 print(f"Agent {i+1} won {agent.wins} times (reward: {agent.reward:.3f})")
             # Print performance of current generation
             self.print_performance(gen)
