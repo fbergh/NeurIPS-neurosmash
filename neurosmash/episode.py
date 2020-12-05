@@ -13,9 +13,10 @@ class Episode:
         t = 0
         while not end:
             if t > self.t_threshold:
-                self.env.reset()
                 print("Time threshold reached. Stopping early.")
-                break
+                episode_reward = self.determine_loss_reward(state, t, overtime= True)
+                is_win = False
+                return is_win, episode_reward
             end, reward, state = self.step(agent, end, reward, state)
             t += 1
         
@@ -39,7 +40,10 @@ class Episode:
         end, reward, state = self.env.step(action)
         return end, reward, state
 
-    def determine_loss_reward(self, state, time_elapsed):
-        # Determine the reward the agnet get even though it lost
-        max_loss_reward = 3
+    def determine_loss_reward(self, state, time_elapsed,overtime = False):
+        # overtime means draw
+        if overtime:
+            return 5
+        # Determine the reward the agent get even though it lost
+        max_loss_reward = 2
         return max_loss_reward * (time_elapsed/self.t_threshold)
