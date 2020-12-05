@@ -13,7 +13,7 @@ class ESAlgorithm:
         self.mutation_lr = mutation_lr # Learning rate for mutations
         self.min_mutation_step = min_mutation_step # Minimum step size for mutations
         self.initial_mutation_step = initial_mutation_step # Initial step size for mutations
-        self.filename = filename
+        self.filename = filename # Filename to save logs to
         self.iter_per_agent = iter_per_agent 
         self.max_reward = iter_per_agent * 10
 
@@ -40,10 +40,12 @@ class ESAlgorithm:
                 print(f"Agent {i+1} won {agent.wins} times (reward: {agent.reward:.3f})")
             # Print performance of current generation
             self.print_performance(gen)
+            # Log performance
             log.log_performance(self.generations, gen)
             # Generate the next generation if necessary
             if gen != n_gens:
                 self.generations[gen+1] = self.create_generation(self.generations[gen], do_mutation, do_crossover)
+        # Close log to dump log data in json file
         log.close()
 
     def run_agent(self, agent, n_iterations):
