@@ -20,7 +20,7 @@ class ESAlgorithm:
     def run(self, n_gens, gen_size, do_mutation=True, do_crossover=True):
         n_iters = self.iter_per_agent
         log = Logger(self.filename)
-        do_mutation = False
+        # do_mutation = False
 
         # Initialize table to store agents (+1 to account for gen 0)   
         self.generations = np.zeros((n_gens+1, gen_size)).astype(ESAgent) 
@@ -123,9 +123,9 @@ class ESAlgorithm:
 
     def get_mutation_step(self, parents):
         parent_rewards = [parent.reward for parent in parents]
-        reward_fraction = self.max_reward / np.average(parent_rewards) 
+        reward_fraction = 1 / np.average(parent_rewards) 
         parent_mutation_steps = [parent.mutation_step for parent in parents]
-        new_mutation_step = np.average(parent_mutation_steps) * np.exp(self.mutation_lr * np.random.normal(0,1)) * reward_fraction
+        new_mutation_step = np.average(parent_mutation_steps) * np.exp(self.mutation_lr * np.random.normal(0,1)) * reward_fraction 
 
         if new_mutation_step < self.min_mutation_step:
             new_mutation_step = self.min_mutation_step
