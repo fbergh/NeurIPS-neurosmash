@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import json
 import numpy as np
-
+import os
 
 def extract_reward_data(filename):
     # Extract reward data from json file
@@ -95,8 +95,8 @@ def plot_average_rewards(filename):
     ax.set_xlabel("Generation")
     ax.set_ylabel("Average Reward")
     ax.set_xticks(generation, generation)
-    fig.savefig("./../plots/average_rewards.png")
-
+    # fig.savefig("./../plots/average_rewards.png")
+    fig.savefig(os.path.join("./", "plots/average_rewards.png"))
 
 def plot_cumulative_rewards(filename):
     # Plot the cumulative average reward across generations
@@ -107,7 +107,7 @@ def plot_cumulative_rewards(filename):
     ax.set_xlabel("Generation")
     ax.set_ylabel("Cumulative Reward")
     ax.set_xticks(generation, generation)
-    fig.savefig("./../plots/cumulative_rewards.png")
+    fig.savefig(os.path.join("./", "plots/cumulative_rewards.png"))
 
 
 def plot_average_wins(filename):
@@ -118,7 +118,8 @@ def plot_average_wins(filename):
     ax.set_xlabel("Generation")
     ax.set_ylabel("Average #Wins")
     ax.set_xticks(generation, generation)
-    fig.savefig("./../plots/average_wins.png")
+    # fig.savefig("./../plots/average_wins.png")
+    fig.savefig(os.path.join("./", "plots/average_wins.png"))
 
 
 def plot_action_proportions(filename):
@@ -141,31 +142,33 @@ def plot_action_proportions(filename):
     ax.set_xlabel("Generation")
     ax.set_ylabel("Action Proportions")
     ax.set_xticks(generation, generation)
-    fig.savefig("./../plots/action_proportions.png")
+    # fig.savefig("./../plots/action_proportions.png")
+    fig.savefig(os.path.join("./", "plots/action_proportions.png"))
 
 
-def plot_mutation_reward(filename):
+def plot_mutation_steps(filename):
     # Plot the average, minimal, and maximal mutation step per generation
-    # Also plot the average reward for comparison
     generation, average_mutation_step, min_mutation_step, max_mutation_step = extract_mutation_data(filename)
-    generation, average_reward, _, _ = extract_reward_data(filename)
     fig, ax = plt.subplots()
-    ax.plot(generation, average_mutation_step, label="Mutation")
-    ax.plot(generation, average_reward, label="Reward")
-    ax.legend()
+    generation, average_reward, _, _ = extract_reward_data(filename)
+    ax.plot( average_mutation_step, label="Mutation")
     ax.fill_between(generation, min_mutation_step, max_mutation_step, alpha = 0.1)
     ax.set_xlabel("Generation")
-    ax.set_ylabel("Average Mutation Step/Average Reward")
+    ax.set_ylabel("Average Mutation Step Size")
     ax.set_xticks(generation, generation)
-    fig.savefig("./../plots/average_mutation_step.png")
+    # fig.savefig("./../plots/average_mutation_step.png")
+    fig.savefig(os.path.join("./", "plots/average_mutation_step.png"))
+
+
 
 
 # Input file
-performance_logs = "./../logs/output.json"
+performance_logs = os.path.join('./', "logs/output.json")
+
 
 # Plotting
 plot_average_rewards(performance_logs)
 plot_cumulative_rewards(performance_logs)
 plot_average_wins(performance_logs)
 plot_action_proportions(performance_logs)
-plot_mutation_reward(performance_logs)
+plot_mutation_steps(performance_logs)
