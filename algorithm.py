@@ -126,13 +126,9 @@ class ESAlgorithm:
         return new_weights
 
     def get_mutation_step(self, parents):
+        # Compute mutation step based on the reward fraction of the parents
         parent_rewards = [parent.reward for parent in parents]
-        reward_fraction = 1 / np.average(parent_rewards) 
-        parent_mutation_steps = [parent.mutation_step for parent in parents]
-        new_mutation_step = np.average(parent_mutation_steps) * np.exp(self.mutation_lr * np.random.normal(0,1)) * reward_fraction 
-
-        if new_mutation_step < self.min_mutation_step:
-            new_mutation_step = self.min_mutation_step
+        new_mutation_step = 1 / np.average(parent_rewards)
             
         return new_mutation_step
 
