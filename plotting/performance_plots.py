@@ -95,8 +95,7 @@ def plot_average_rewards(filename):
     ax.set_xlabel("Generation")
     ax.set_ylabel("Average Reward")
     ax.set_xticks(generation, generation)
-    # fig.savefig("./../plots/average_rewards.png")
-    fig.savefig(os.path.join("./", "plots/average_rewards.png"))
+    fig.savefig(os.path.join("../", "plots/average_rewards.png"))
 
 def plot_cumulative_rewards(filename):
     # Plot the cumulative average reward across generations
@@ -107,7 +106,7 @@ def plot_cumulative_rewards(filename):
     ax.set_xlabel("Generation")
     ax.set_ylabel("Cumulative Reward")
     ax.set_xticks(generation, generation)
-    fig.savefig(os.path.join("./", "plots/cumulative_rewards.png"))
+    fig.savefig(os.path.join("../", "plots/cumulative_rewards.png"))
 
 
 def plot_average_wins(filename):
@@ -118,8 +117,7 @@ def plot_average_wins(filename):
     ax.set_xlabel("Generation")
     ax.set_ylabel("Average #Wins")
     ax.set_xticks(generation, generation)
-    # fig.savefig("./../plots/average_wins.png")
-    fig.savefig(os.path.join("./", "plots/average_wins.png"))
+    fig.savefig(os.path.join("../", "plots/average_wins.png"))
 
 
 def plot_action_proportions(filename):
@@ -142,8 +140,7 @@ def plot_action_proportions(filename):
     ax.set_xlabel("Generation")
     ax.set_ylabel("Action Proportions")
     ax.set_xticks(generation, generation)
-    # fig.savefig("./../plots/action_proportions.png")
-    fig.savefig(os.path.join("./", "plots/action_proportions.png"))
+    fig.savefig(os.path.join("../", "plots/action_proportions.png"))
 
 
 def plot_mutation_steps(filename):
@@ -156,14 +153,11 @@ def plot_mutation_steps(filename):
     ax.set_xlabel("Generation")
     ax.set_ylabel("Average Mutation Step Size")
     ax.set_xticks(generation, generation)
-    # fig.savefig("./../plots/average_mutation_step.png")
-    fig.savefig(os.path.join("./", "plots/average_mutation_step.png"))
-
-
+    fig.savefig(os.path.join("../", "plots/average_mutation_step.png"))
 
 
 # Input file
-performance_logs = os.path.join('./', "logs/output.json")
+performance_logs = os.path.join('../', "logs/output.json")
 
 
 # Plotting

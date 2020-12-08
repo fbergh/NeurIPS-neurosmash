@@ -1,4 +1,6 @@
 import numpy as np
+import pickle
+import os
 from mxnet import nd
 from networks import DenseNet
 from agents import ESAgent
@@ -42,6 +44,8 @@ class ESAlgorithm:
             self.print_performance(gen)
             # Log performance
             log.log_performance(self.generations, gen)
+            # Save generation to pickle
+            self.save_generation(self.generations, gen)
             # Generate the next generation if necessary
             if gen != n_gens:
                 self.generations[gen+1] = self.create_generation(self.generations[gen], do_mutation, do_crossover)
@@ -138,3 +142,9 @@ class ESAlgorithm:
         print(f"Average wins in generation {gen_idx}: {np.average(gen_wins):.3f}")
         print(f"Average rewards in generation {gen_idx}: {np.average(gen_rewards):.3f}")
         print(f"Best agent in generation {gen_idx} won {gen_wins[np.argmax(gen_rewards)]} times (reward: {max(gen_rewards):.3f})")
+
+    def save_generation(self, gen, gen_idx, path="generations"):
+        filename = os.path.join(path, f"generation{gen_idx}.pkl")
+        if not os.path.exists(path):
+            os.mkdir(path)
+        pickle.dump(gen[gen_idx], open(filename, "wb"))
