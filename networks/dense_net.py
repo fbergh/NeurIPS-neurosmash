@@ -1,6 +1,11 @@
+### IMPORTS ###
+
 from .network import Network
 from mxnet import nd
 from mxnet.gluon import nn
+
+
+### DENSE NEURAL NETWORK CLASS ###
 
 class DenseNet(Network):
     def __init__(self, params, **kwargs):

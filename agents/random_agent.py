@@ -1,7 +1,11 @@
+### IMPORTS ###
+
 from .agent import Agent
 
+
+### RANDOM AGENT CLASS ###
+
 class RandomAgent(Agent):
-    """ Random Agent class """
     def __init__(self):
         super().__init__()
 

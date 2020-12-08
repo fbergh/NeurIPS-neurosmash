@@ -1,22 +1,25 @@
+### IMPORTS ###
+
 import json
 import os
 
 
+### LOGGER CLASS ###
+
 class Logger:
-    def __init__(self, filename, path = "logs"):
+    def __init__(self, filename, path="output/logs"):
         self.filename = filename
         self.path = path
         if not os.path.exists(path):
             os.mkdir(path)
         self.log = {"performance": []}
 
-    def log_performance(self, gen, gen_idx):
-        wins = [agent.wins for agent in gen[gen_idx]]
-        rewards = [agent.reward for agent in gen[gen_idx]]
+    def log_gen_performance(self, gen, gen_idx):
+        wins = [agent.total_wins for agent in gen[gen_idx]]
+        rewards = [agent.total_reward for agent in gen[gen_idx]]
         performance = {"generation": gen_idx,
                        "rewards": rewards,
                        "wins": wins}
-
         self.log["performance"].append(performance)
 
     def close(self):

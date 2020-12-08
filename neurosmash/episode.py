@@ -1,3 +1,5 @@
+### EPISODE CLASS ###
+
 class Episode:
     def __init__(self, environment, t_threshold=500, loss_reward=True, cooldown=False):
         self.env = environment
@@ -6,6 +8,7 @@ class Episode:
         self.cooldown = cooldown
 
     def run(self, agent):
+        """ Run an episode using the provided agent """
         # Reset environment 
         end, reward, state = self.env.reset()
 

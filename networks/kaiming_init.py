@@ -1,5 +1,10 @@
+### IMPORTS ###
+
 from mxnet import init, random
 import math
+
+
+### KAIMING/HE INITIALIZATION FOR MXNET ###
 
 class KaimingInit(init.Initializer):
     """

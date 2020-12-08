@@ -1,3 +1,5 @@
+### IMPORTS ###
+
 from .agent import Agent
 from .agent_utils import get_layer_weights, set_layer_weights
 from networks import KaimingInit
@@ -5,12 +7,14 @@ import mxnet as mx
 from mxnet import nd
 import numpy as np
 
+
+### EVOLUTIONARY STRATEGY AGENT CLASS ###
+
 class EvolutionaryAgent(Agent):
-    """ Evolutionary Strategy Agent class """
-    def __init__(self, model, model_params, mutation_step, weights=None, ctx=mx.cpu()):
+    def __init__(self, model_type, model_params, mutation_step, weights=None, ctx=mx.cpu()):
         super().__init__()
         self.mutation_step = mutation_step
-        self.model = model(model_params)
+        self.model = model_type(model_params)
         self.model.net.initialize(KaimingInit(), ctx=ctx, force_reinit=True)
         if weights:
             self.set_weights(weights)

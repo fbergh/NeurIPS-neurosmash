@@ -1,9 +1,12 @@
+### PREPROCESSOR CLASS ###
+
 class Preprocessor:
     def __init__(self, n_channels, crop_values):
         self.left, self.top, self.right, self.bottom = self._cleanup_crop_values(crop_values)
         self.channels_to_keep = self._get_channels_to_keep(n_channels)
 
     def preprocess(self, img):
+        """ Preprocess image by reducing channels, cropping and stretching contrast """
         img = img / 255
         img = self._reduce_channels(img)
         img = self._crop(img)
@@ -38,9 +41,7 @@ class Preprocessor:
         return img
 
     def _stretch_contrast(self, img):
-        """
-        Contrast stretching by rescaling the min and max value of the image to [0,1] per channel
-        """
+        """ Contrast stretching by rescaling the min and max value of the image to [0,1] per channel """
         min_max_values = [(img[:, :, c].min(), img[:, :, c].max()) for c in range(img.shape[2])]
         for channel, (min_val, max_val) in enumerate(min_max_values):
             img[:, :, channel] = (img[:, :, channel] - min_val) / (max_val - min_val)

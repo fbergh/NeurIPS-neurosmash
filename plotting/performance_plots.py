@@ -1,7 +1,17 @@
+### IMPORTS ###
+
 import matplotlib.pyplot as plt
 import json
 import numpy as np
 
+
+### CONSTANTS ###
+
+LOG_LOCATION = "output/logs/output.json"
+PLOT_LOCATION = "output/plots/"
+
+
+### FUNCTIONS FOR PLOTTING ALGORITHM PERFORMANCE ###
 
 def extract_reward_data(filename):
     with open(filename, 'r') as openfile:
@@ -22,7 +32,6 @@ def extract_reward_data(filename):
 
     return generation, average_reward, min_reward, max_reward
 
-
 def extract_win_data(filename):
     with open(filename, 'r') as openfile:
         output = json.load(openfile)
@@ -37,7 +46,6 @@ def extract_win_data(filename):
 
     return generation, average_wins
 
-
 def plot_average_rewards(filename):
     generation, average_reward, min_reward, max_reward = extract_reward_data(filename)
     fig, ax = plt.subplots()
@@ -46,8 +54,7 @@ def plot_average_rewards(filename):
     ax.set_xlabel("Generation")
     ax.set_ylabel("Average Reward")
     ax.set_xticks(generation, generation)
-    fig.savefig("./../plots/average_rewards.png")
-
+    fig.savefig(PLOT_LOCATION+"average_rewards.png")
 
 def plot_cumulative_rewards(filename):
     generation, average_reward, _, _ = extract_reward_data(filename)
@@ -57,8 +64,7 @@ def plot_cumulative_rewards(filename):
     ax.set_xlabel("Generation")
     ax.set_ylabel("Cumulative Reward")
     ax.set_xticks(generation, generation)
-    fig.savefig("./../plots/cumulative_rewards.png")
-
+    fig.savefig(PLOT_LOCATION+"cumulative_rewards.png")
 
 def plot_average_wins(filename):
     generation, average_wins = extract_win_data(filename)
@@ -67,10 +73,9 @@ def plot_average_wins(filename):
     ax.set_xlabel("Generation")
     ax.set_ylabel("Average #Wins")
     ax.set_xticks(generation, generation)
-    fig.savefig("./../plots/average_wins.png")
+    fig.savefig(PLOT_LOCATION+"average_wins.png")
 
-
-performance_logs = "./../logs/output.json"
-plot_average_rewards(performance_logs)
-plot_cumulative_rewards(performance_logs)
-plot_average_wins(performance_logs)
+if __name__ == "__main__":
+    plot_average_rewards(LOG_LOCATION)
+    plot_cumulative_rewards(LOG_LOCATION)
+    plot_average_wins(LOG_LOCATION)

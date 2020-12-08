@@ -1,7 +1,12 @@
+### IMPORTS ###
+
 import mxnet.ndarray as nd
 import numpy as np
 import socket
 from PIL import Image
+
+
+### ENVIRONMENT CLASS ###
 
 class Environment:
     def __init__(self, ip="127.0.0.1", port=13000, size=768, timescale=1, preprocessor=None):

@@ -1,6 +1,11 @@
+### IMPORTS ###
+
 from .network import Network
 from mxnet import nd
 from mxnet.gluon import nn
+
+
+### CONVOLUTIONAL NEURAL NETWORK CLASS ###
 
 class ConvNet(Network):
     def __init__(self, params, **kwargs):

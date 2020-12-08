@@ -1,9 +1,10 @@
+### AGENT SUPERCLASS ###
+
 class Agent(object):
-    """ Agent superclass """
     def __init__(self):
         self.rewards = []
         self.wins = []
-        self.action_counter = {0: 0, 1: 0, 2: 0}
+        self.action_counter = {0: 0, 1: 0, 2: 0, 3:0}
         
     def step(self, end, reward, state):
         raise NotImplementedError
@@ -15,8 +16,8 @@ class Agent(object):
 
     @property
     def total_reward(self):
-        return sum(rewards)
+        return sum(self.rewards)
     
     @property
     def total_wins(self):
-        return sum(wins)
+        return sum(self.wins)

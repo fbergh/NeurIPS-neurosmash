@@ -1,6 +1,11 @@
+### IMPORTS ###
+
 import matplotlib.pyplot as plt
 import scipy.ndimage as ndimage
 import mxnet.ndarray as nd
+
+
+### FUNCTIONS FOR PLOTTING STATE IMAGES ###
 
 def plot_img(img):
     if type(img) == nd.ndarray.NDArray:
@@ -13,26 +18,21 @@ def plot_separate_channels(img, channels=[0, 1, 2]):
     if type(img) == nd.ndarray.NDArray:
         img = img.asnumpy()
     for c in channels:
-        plt.figure()
-        plt.imshow(img[:, :, c])
-        plt.show()
+        plot_img(img[:,:,c])
 
 def plot_two_channels(img, remove_channel):
-    """
-    To plot an RG, RB, or BG image
-    """
+    """ Plot an RG, RB, or BG image """
     img_copy = img.copy()
     if type(img_copy) == nd.ndarray.NDArray:
         img_copy = img_copy.asnumpy()
     img_copy[:, :, remove_channel] = 0
-    plt.figure()
-    plt.imshow(img_copy)
-    plt.show()
+    plot_img(img_copy)
+
+
+### LEGACY CODE FOR TESTING PURPOSES ###
 
 def increase_contrast(img):
-    """
-    Increase contrast by rescaling the min and max value of the image to 0 and 255, respectively
-    """
+    """ Increase contrast by rescaling the min and max value of the image to 0 and 255, respectively """
     img_copy = img.copy()
     if type(img_copy) == nd.ndarray.NDArray:
         img_copy = img_copy.asnumpy()
