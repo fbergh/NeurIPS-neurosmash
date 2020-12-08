@@ -3,10 +3,9 @@
 import argparse
 import mxnet.context as cuda
 from neurosmash import Environment, Episode
-from algorithm import RandomAlgorithm, ESAlgorithm
-from agents import EvolutionaryAgent
+from algorithms import RandomAlgorithm, ESAlgorithm
 from networks import ConvNet, DenseNet
-from processing import Preprocessor, Logger
+from processing import Preprocessor
 
 
 ### CONSTANTS ###
@@ -22,8 +21,8 @@ def main(args):
     if args.agent_type == "random":
         environment = Environment(args.ip, args.port, args.size, args.timescale)
         episode = Episode(environment, t_threshold=args.t_threshold, cooldown=args.cooldown)
-        algorithm = RandomAlgorithm(episode, args.iter_per_agent, args.logger_filename)
-        algorithm.run(args.n_generations, args.gen_size)
+        algorithm = RandomAlgorithm(episode, args.logger_filename)
+        algorithm.run(args.n_generations, args.gen_size, args.iter_per_agent)
         return
 
     # Describe desired shape of states after preprocessing
@@ -43,11 +42,10 @@ def main(args):
                     "kernel_size":(args.kernel_size,args.kernel_size),
                     "n_actions":3}
     model_type = ConvNet if args.agent_type == "conv" else DenseNet
-    algorithm = ESAlgorithm(episode, model_type, model_params, args.iter_per_agent, args.mutation_lr, 
-                            args.min_mutation_step, args.initial_mutation_step, args.logger_filename)
+    algorithm = ESAlgorithm(episode, model_type, model_params, args.min_mutation_step, args.initial_mutation_step, args.logger_filename)
 
     # Run algorithm
-    algorithm.run(args.n_generations, args.gen_size,  args.do_mutation, args.do_crossover)
+    algorithm.run(args.n_generations, args.gen_size, args.iter_per_agent, args.do_mutation, args.do_crossover)
 
 def str2bool(v):
     # Parse booleans obtained using argparse
@@ -80,7 +78,6 @@ if __name__ == "__main__":
     p.add_argument('--n_generations', type=int, default=50, help="Number of generations we want to run")
     p.add_argument('--gen_size', type=int, default=25, help="Number of agents per generation")
     p.add_argument('--iter_per_agent', type=int, default=10, help="Number of times each agent should be tested")
-    p.add_argument('--mutation_lr', type=float, default=0.01, help="Learning rate for mutations")
     p.add_argument('--min_mutation_step', type=float, default=0.01, help="Minimum step size for mutations")
     p.add_argument('--initial_mutation_step', type=float, default=0.25, help="Initial step size for mutations")
     p.add_argument('--do_mutation', type=str2bool, nargs='?', const=True, default=True, help="Use mutation when creating children")

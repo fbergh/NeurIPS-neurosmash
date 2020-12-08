@@ -28,9 +28,6 @@ def plot_two_channels(img, remove_channel):
     img_copy[:, :, remove_channel] = 0
     plot_img(img_copy)
 
-
-### LEGACY CODE FOR TESTING PURPOSES ###
-
 def increase_contrast(img):
     """ Increase contrast by rescaling the min and max value of the image to 0 and 255, respectively """
     img_copy = img.copy()

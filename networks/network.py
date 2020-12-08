@@ -1,6 +1,5 @@
 ### IMPORTS ###
 
-from mxnet import nd, gluon
 from mxnet.gluon import nn
 
 

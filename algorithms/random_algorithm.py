@@ -9,10 +9,10 @@ import numpy as np
 ### RANDOM ALGORITHM CLASS ###
 
 class RandomAlgorithm(Algorithm):
-    def __init__(self, episode, iter_per_agent, logger_filename):
-        super().__init__(episode, iter_per_agent, logger_filename)
+    def __init__(self, episode, logger_filename):
+        super().__init__(episode, logger_filename)
 
-    def run(self, n_gens, gen_size):
+    def run(self, n_gens, gen_size, iter_per_agent):
         """ Run random agents for the given number of generations and generation size """
 
         # Initialize logger and table to store agents (+1 to account for gen 0)
@@ -28,12 +28,15 @@ class RandomAlgorithm(Algorithm):
             # Run each agent for the desired number of iterations
             for i, agent in enumerate(self.generations[gen]):
                 print(f"Running agent {i+1}")
-                self.run_agent(agent, self.iter_per_agent)
-                print(f"Action proportions of agent {i+1}: {agent.get_action_proportions()}")
+                self.run_agent(agent, iter_per_agent)
+                print(f"Action proportions of agent {i+1}: {agent.action_proportions}")
                 print(f"Agent {i+1} won {agent.total_wins} times (reward: {agent.total_reward:.3f})")
             # Print performance of current generation
             self.print_gen_performance(gen)
+            # Log performance
             self.logger.log_gen_performance(self.generations, gen)
+            # Save generation to pickle
+            self.save_generation(self.generations, gen)
             # Generate the next generation if necessary
             if gen != n_gens:
                 self.generations[gen+1] = self.create_generation(gen_size)

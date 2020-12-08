@@ -9,7 +9,8 @@ class Agent(object):
     def step(self, end, reward, state):
         raise NotImplementedError
 
-    def get_action_proportions(self):
+    @property
+    def action_proportions(self):
         total_count = sum(self.action_counter.values())
         norm_action_counts = {action: count / total_count for action, count in self.action_counter.items()}
         return norm_action_counts
