@@ -3,12 +3,13 @@
 import matplotlib.pyplot as plt
 import json
 import numpy as np
+import os
 
 
 ### CONSTANTS ###
 
-LOG_LOCATION = "output/logs/output.json"
-PLOT_LOCATION = "output/plots/"
+LOG_LOCATION = os.path.join("../", "output", "logs", "output.json")
+PLOT_LOCATION = os.path.join("../", "output", "plots")
 
 
 ### EXTRACTING PERFORMANCE ###
@@ -33,6 +34,7 @@ def extract_reward_data(filename):
 
     return generation, average_reward, min_reward, max_reward
 
+
 def extract_win_data(filename):
     """ Extract win data from json file """
     with open(filename, 'r') as openfile:
@@ -47,6 +49,7 @@ def extract_win_data(filename):
         average_wins.append(np.average(gen["wins"]))
 
     return generation, average_wins
+
 
 def extract_action_data(filename):
     """ Extract action proportion data from json file """
@@ -71,6 +74,7 @@ def extract_action_data(filename):
         action_proportions.append((np.mean(gen_actions, axis=0)))
 
     return generation, actions, action_proportions
+
 
 def extract_mutation_data(filename):
     """ Extract mutation data from json file """
@@ -104,7 +108,8 @@ def plot_average_rewards(filename):
     ax.set_xlabel("Generation")
     ax.set_ylabel("Average Reward")
     ax.set_xticks(generation, generation)
-    fig.savefig(PLOT_LOCATION+"average_rewards.png")
+    fig.savefig(os.path.join(PLOT_LOCATION, "average_rewards.png"))
+
 
 def plot_cumulative_rewards(filename):
     """ Plot the cumulative average reward across generations """
@@ -115,7 +120,8 @@ def plot_cumulative_rewards(filename):
     ax.set_xlabel("Generation")
     ax.set_ylabel("Cumulative Reward")
     ax.set_xticks(generation, generation)
-    fig.savefig(PLOT_LOCATION+"cumulative_rewards.png")
+    fig.savefig(os.path.join(PLOT_LOCATION, "cumulative_rewards.png"))
+
 
 def plot_average_wins(filename):
     """ Plot the average number of wins per generation """
@@ -125,7 +131,8 @@ def plot_average_wins(filename):
     ax.set_xlabel("Generation")
     ax.set_ylabel("Average #Wins")
     ax.set_xticks(generation, generation)
-    fig.savefig(PLOT_LOCATION+"average_wins.png")
+    fig.savefig(os.path.join(PLOT_LOCATION, "average_wins.png"))
+
 
 def plot_action_proportions(filename):
     """ Plot the average action proportions per generation in a stacked bar plot """
@@ -147,7 +154,8 @@ def plot_action_proportions(filename):
     ax.set_xlabel("Generation")
     ax.set_ylabel("Action Proportions")
     ax.set_xticks(generation, generation)
-    fig.savefig(PLOT_LOCATION+"action_proportions.png")
+    fig.savefig(os.path.join(PLOT_LOCATION, "action_proportions.png"))
+
 
 def plot_mutation_steps(filename):
     """ Plot the average, minimal, and maximal mutation step per generation """
@@ -159,9 +167,13 @@ def plot_mutation_steps(filename):
     ax.set_xlabel("Generation")
     ax.set_ylabel("Average Mutation Step Size")
     ax.set_xticks(generation, generation)
-    fig.savefig(PLOT_LOCATION+"average_mutation_step.png")
+    fig.savefig(os.path.join(PLOT_LOCATION, "average_mutation_step.png"))
+
 
 if __name__ == "__main__":
+    if not os.path.exists(PLOT_LOCATION):
+        os.mkdir(PLOT_LOCATION)
+
     plot_average_rewards(LOG_LOCATION)
     plot_cumulative_rewards(LOG_LOCATION)
     plot_average_wins(LOG_LOCATION)
