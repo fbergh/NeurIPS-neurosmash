@@ -9,7 +9,6 @@ import numpy as np
 ### CONSTANTS ###
 
 LOG_LOCATIONS = ["output/logs/random_log.json","output/logs/dense_log.json","output/logs/random_log.json"]
-#LOG_LOCATIONS = ["output/logs/random_log.json", "output/logs/dense_log.json", "output/logs/conv_log.json"]
 PLOT_LOCATION = "output/plots"
 
 

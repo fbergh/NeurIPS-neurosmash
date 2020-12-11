@@ -48,7 +48,7 @@ def main(args):
     algorithm.run(args.n_generations, args.gen_size, args.iter_per_agent, args.do_mutation, args.do_crossover)
 
 def str2bool(v):
-    # Parse booleans obtained using argparse
+    """ Parse booleans obtained using argparse """
     if isinstance(v, bool):
         return v
     if v.lower() in ('yes', 'true', 't', 'y', '1'):
@@ -70,10 +70,10 @@ if __name__ == "__main__":
 
     # Agent parameters
     p.add_argument('--agent_type', type=str, default="conv", choices=["random","conv","dense"], help="Type of agent to use (random/conv/dense)")
-    p.add_argument('--n_hidden', type=int, default=1024, help="Number of hidden units (only applicable for agent type \"dense\")")
-    p.add_argument('--n_channels', type=int, default=3, choices=[1,2,3], help="Number of channels to use (only applicable for agent type \"conv\")")
     p.add_argument('--kernel_size', type=int, default=3, help="Tuple denoting size of kernel (only applicable for agent type \"conv\")")
-
+    p.add_argument('--n_hidden', type=int, default=1024, help="Number of hidden units (only applicable for agent type \"dense\")")
+    p.add_argument('--n_channels', type=int, default=3, choices=[1,2,3], help="Number of channels to use")
+    
     # Algorithm parameters
     p.add_argument('--n_generations', type=int, default=50, help="Number of generations we want to run")
     p.add_argument('--gen_size', type=int, default=25, help="Number of agents per generation")
