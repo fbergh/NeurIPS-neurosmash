@@ -4,12 +4,13 @@ from neurosmash import Environment, Episode
 from processing import Preprocessor
 import argparse
 import pickle
+import os
 import numpy as np
 
 
 ### CONSTANTS ###
 
-GEN_LOCATION = "output/generations/"
+GEN_LOCATION = os.path.join("../", "output", "generations")
 GEN_FILENAME = "generation50.pkl"
 DEFAULT_CROP_RATIO = 28 / 96
 
@@ -20,11 +21,11 @@ def run_demo(args):
     # Initialize preprocessor, environment and episode
     crop_values = (0,0,0,int(DEFAULT_CROP_RATIO*args.size))
     preprocessor = Preprocessor(args.n_channels, crop_values)
-    environment = Environment(args.ip, args.port, args.size, args.timescale)
+    environment = Environment(args.ip, args.port, args.size, args.timescale, preprocessor)
     episode = Episode(environment, t_threshold=args.t_threshold, cooldown=args.cooldown)
 
     # Load best agent in specified generation file
-    with open(args.gen_file_loc + args.gen_filename, "rb") as f:
+    with open(os.path.join(args.gen_file_loc, args.gen_filename), "rb") as f:
         generation = pickle.load(f)
     gen_rewards = [agent.total_reward for agent in generation]
     best_agent = generation[np.argmax(gen_rewards)]
@@ -37,6 +38,7 @@ def run_demo(args):
         rewards.append(reward)
         wins.append(win)
     print(f"The best agent in the given generation file won {sum(wins)} times (reward: {sum(rewards)})")
+    print(f"Action proportions of this agent: {best_agent.action_proportions}")
 
 def str2bool(v):
     """ Parse booleans obtained using argparse """
