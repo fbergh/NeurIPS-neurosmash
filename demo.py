@@ -10,7 +10,7 @@ import numpy as np
 
 ### CONSTANTS ###
 
-GEN_LOCATION = os.path.join("../", "output", "generations")
+GEN_LOCATION = os.path.join("output", "generations")
 GEN_FILENAME = "generation50.pkl"
 DEFAULT_CROP_RATIO = 28 / 96
 
