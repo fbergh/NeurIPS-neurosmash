@@ -32,7 +32,7 @@ class Algorithm:
         print(f"Average rewards in generation {gen_idx}: {np.average(gen_rewards):.3f}")
         print(f"Best agent in generation {gen_idx} won {gen_wins[np.argmax(gen_rewards)]} times (reward: {max(gen_rewards):.3f})")
 
-    def save_generation(self, gen, gen_idx, path="output/generations"):
+    def save_generation(self, gen, gen_idx, path=os.path.join("output","generations")):
         """ Save a generation using pickle """
         filename = os.path.join(path, f"generation{gen_idx}.pkl")
         if not os.path.exists(path):
