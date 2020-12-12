@@ -7,10 +7,11 @@ import numpy as np
 
 
 ### CONSTANTS ###
-
-LOG_LOCATIONS = ["output/logs/random_log.json","output/logs/dense_log.json","output/logs/random_log.json"]
-PLOT_LOCATION = "output/plots"
-
+RANDOM = os.path.join("../", "output", "logs", "random_log.json")
+DENSE = os.path.join("../", "output", "logs", "dense_log.json")
+CONV = os.path.join("../", "output", "logs", "conv_log.json")
+LOG_LOCATIONS = [RANDOM, DENSE, CONV]
+PLOT_LOCATION = os.path.join("../", "output", "plots")
 
 ### PLOTTING COMPARISONS
 
@@ -76,8 +77,8 @@ def plot_mutation_steps_comparison(mutation_data):
     labels = ["Random", "Dense", "Convolutional"] 
     for i, data in enumerate(mutation_data):
         generation, average_mutation_step, min_mutation_step, max_mutation_step = data
-        ax.plot( average_mutation_step, label=labels[i])
-        ax.fill_between(generation, min_mutation_step, max_mutation_step, alpha = 0.1)
+        ax.plot( average_mutation_step[1:], label=labels[i])
+        ax.fill_between(generation[1:], min_mutation_step[1:], max_mutation_step[1:], alpha = 0.1)
         ax.set_xticks(generation, generation)
     ax.legend(loc="upper left")
     ax.grid()
@@ -85,6 +86,9 @@ def plot_mutation_steps_comparison(mutation_data):
 
 
 if __name__ == "__main__":
+    if not os.path.exists(PLOT_LOCATION):
+        os.mkdir(PLOT_LOCATION)
+
     reward_data = [extract_reward_data(filename) for filename in LOG_LOCATIONS]
     win_data = [extract_win_data(filename) for filename in LOG_LOCATIONS]
     action_data = [extract_action_data(filename) for filename in LOG_LOCATIONS]
