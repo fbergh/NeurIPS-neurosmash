@@ -14,7 +14,6 @@ class RandomAlgorithm(Algorithm):
 
     def run(self, n_gens, gen_size, iter_per_agent):
         """ Run random agents for the given number of generations and generation size """
-
         # Initialize logger and table to store agents (+1 to account for gen 0)
         self.logger = Logger(self.logger_filename)
         self.generations = np.zeros((n_gens+1, gen_size)).astype(RandomAgent) 

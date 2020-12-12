@@ -18,6 +18,7 @@ DEFAULT_CROP_RATIO = 28 / 96
 ### RUNNING DEMO ###
 
 def run_demo(args):
+    """ Run a demo of the best agent, as specified by the given arguments """
     # Initialize preprocessor, environment and episode
     crop_values = (0,0,0,int(DEFAULT_CROP_RATIO*args.size))
     preprocessor = Preprocessor(args.n_channels, crop_values)

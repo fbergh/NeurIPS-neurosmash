@@ -14,6 +14,7 @@ class Preprocessor:
         return img
 
     def _cleanup_crop_values(self, crop_values):
+        """ Check for invalid crop values """
         left, top, right, bottom = crop_values
         if bottom == 0:
             bottom = None
@@ -23,6 +24,7 @@ class Preprocessor:
         return left, top, right, bottom
 
     def _get_channels_to_keep(self, n_channels):
+        """ Select which channels to keep """
         channels_to_keep = [0, 1, 2]
         if n_channels == 1:
             # Keep red channel
@@ -33,9 +35,11 @@ class Preprocessor:
         return channels_to_keep
 
     def _reduce_channels(self, img):
+        """ Reduce the number of channels in the image """
         return img[:, :, self.channels_to_keep]
 
     def _crop(self, img):
+        """ Crop image as specified """
         img = img[self.top:-self.bottom] if self.bottom else img[self.top:]
         img = img[:, self.left:-self.right] if self.right else img[:, self.left:]
         return img

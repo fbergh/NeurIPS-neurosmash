@@ -1,21 +1,24 @@
 ### IMPORTS ###
 
-from performance_plots import extract_reward_data, extract_win_data, extract_action_data, extract_mutation_data
+from performance_plots import extract_reward_data, extract_win_data, extract_action_data, extract_mutation_data, plot_action_proportions
 import matplotlib.pyplot as plt
 import os
 import numpy as np
 
 
 ### CONSTANTS ###
-RANDOM = os.path.join("../", "output", "logs", "random_log.json")
-DENSE = os.path.join("../", "output", "logs", "dense_log.json")
-CONV = os.path.join("../", "output", "logs", "conv_log.json")
+
+RANDOM = os.path.join("output", "logs", "random_log.json")
+DENSE = os.path.join("output", "logs", "dense_log.json")
+CONV = os.path.join("output", "logs", "conv_log.json")
 LOG_LOCATIONS = [RANDOM, DENSE, CONV]
-PLOT_LOCATION = os.path.join("../", "output", "plots")
+PLOT_LOCATION = os.path.join("output", "plots")
+
 
 ### PLOTTING COMPARISONS
 
 def plot_average_rewards_comparison(reward_data):
+    """ Plot average rewards for all agent types in a single plot """
     fig, ax = plt.subplots()
     ax.set_xlabel("Generation")
     ax.set_ylabel("Average Reward")
@@ -30,6 +33,7 @@ def plot_average_rewards_comparison(reward_data):
     fig.savefig(os.path.join(PLOT_LOCATION, "average_rewards_comparison.png"))
 
 def plot_cumulative_rewards_comparison(reward_data):
+    """ Plot cumulative rewards for all agent types in a single plot """
     fig, ax = plt.subplots()
     ax.set_xlabel("Generation")
     ax.set_ylabel("Cumulative Reward")
@@ -43,34 +47,15 @@ def plot_cumulative_rewards_comparison(reward_data):
     ax.grid()
     fig.savefig(os.path.join(PLOT_LOCATION, "cumulative_rewards_comparison.png"))
 
-
 def plot_action_proportions_comparison(action_data):
+    """ Plot action proportions for all agent types (in separate plots) """
     labels = ["Random", "Dense", "Convolutional"]
     for i,data in enumerate(action_data):
         agent_type = labels[i]
-        plot_action_proportions_helper(agent_type, data)
-
-def plot_action_proportions_helper(agent_type,data):
-        fig, ax = plt.subplots()
-        ax.set_xlabel("Generation")
-        ax.set_ylabel("Action Proportions")
-        generation, actions, action_proportions = data
-        action_proportions = np.asarray(action_proportions)
-        for j in range(action_proportions.shape[1]):
-            if j == 0 :
-                ax.bar(generation, action_proportions[:, j], label = f"Action {actions[j]}")
-                previous_action_proportions = action_proportions[:, j]
-            else:
-                # stack on previous data
-                ax.bar(generation, action_proportions[:, j], bottom=previous_action_proportions, label = f"Action {actions[j]}")
-                previous_action_proportions += action_proportions[:, j]
-        ax.legend(loc="upper left")
-        ax.grid()
-
-        fig.savefig(os.path.join(PLOT_LOCATION, f"action_proportions_comparison_{agent_type}.png"))
-
+        plot_action_proportions(data, agent_type)
 
 def plot_mutation_steps_comparison(mutation_data):
+    """ Plot mutations step sizes for all agent types in a single plot """
     fig, ax = plt.subplots()
     ax.set_xlabel("Generation")
     ax.set_ylabel("Average Mutation Step Size")

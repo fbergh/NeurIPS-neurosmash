@@ -15,6 +15,7 @@ class Logger:
         self.log = {"performance": []}
 
     def log_gen_performance(self, gen, gen_idx):
+        """ Log generation performance to log dictionary """
         wins = [agent.total_wins for agent in gen[gen_idx]]
         rewards = [agent.total_reward for agent in gen[gen_idx]]
         actions = [agent.action_proportions for agent in gen[gen_idx]]
@@ -27,6 +28,6 @@ class Logger:
         self.log["performance"].append(performance)
 
     def close(self):
-        # Dump performance data to json file
+        """ Dump performance data to json file """
         with open(os.path.join(self.path, self.filename), 'w') as outfile:
             json.dump(self.log, outfile, indent="  ")

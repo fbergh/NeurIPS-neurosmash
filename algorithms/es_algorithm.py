@@ -19,7 +19,6 @@ class ESAlgorithm(Algorithm):
 
     def run(self, n_gens, gen_size, iter_per_agent, do_mutation=True, do_crossover=True):
         """ Run the evolutionary strategy algorithm for the given number of generations and generation size """
-        
         # Initialize logger and table to store agents (+1 to account for gen 0)
         self.logger = Logger(self.logger_filename)
         self.generations = np.zeros((n_gens+1, gen_size)).astype(EvolutionaryAgent) 
@@ -106,7 +105,7 @@ class ESAlgorithm(Algorithm):
         return new_weights
 
     def get_mutation_step(self, parents):
-        # Compute mutation step based on the reward fraction of the parents
+        """ Compute mutation step based on the reward fraction of the parents """
         parent_rewards = [parent.total_reward for parent in parents]
         new_mutation_step = 1 / np.average(parent_rewards)
         return min(max(new_mutation_step, self.min_mutation_step), self.initial_mutation_step)

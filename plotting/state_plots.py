@@ -40,6 +40,7 @@ def increase_contrast(img):
     return img_copy
 
 def gaussian_noise(img, sigma=1):
+    """ Plot image with Gaussian noise """
     img_copy = img.copy()
     if type(img_copy) == nd.ndarray.NDArray:
         img_copy = img_copy.asnumpy()

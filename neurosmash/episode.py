@@ -43,9 +43,10 @@ class Episode:
         return end, reward, state
 
     def determine_loss_reward(self, state, time_elapsed, draw=False):
-        # A draw results in a reward of 5
+        """ Determine reward of agent if it did not win """
+        # A draw (timeout reached) results in a reward of 5
         if draw:
             return 5
-        # Determine the reward the agent get even though it lost (maximum reward = 2)
+        # Determine the reward for a loss (maximum reward = 2)
         max_loss_reward = 2
         return max_loss_reward * (time_elapsed/self.t_threshold)

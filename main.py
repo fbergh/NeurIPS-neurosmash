@@ -16,7 +16,7 @@ DEFAULT_CROP_RATIO = 28 / 96
 ### MAIN FUNCTION ###
 
 def main(args):
-
+    """ Run the (evolutionary/random) algorithm for the specified (evolutionary/random) agent """
     # If the chosen agent type is a random agent, run the agent for the desired number of generations and terminate
     if args.agent_type == "random":
         environment = Environment(args.ip, args.port, args.size, args.timescale)
