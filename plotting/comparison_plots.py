@@ -77,7 +77,7 @@ def plot_mutation_steps_comparison(mutation_data):
     labels = ["Random", "Dense", "Convolutional"] 
     for i, data in enumerate(mutation_data):
         generation, average_mutation_step, min_mutation_step, max_mutation_step = data
-        ax.plot( average_mutation_step[1:], label=labels[i])
+        ax.plot(generation[1:], average_mutation_step[1:], label=labels[i])
         ax.fill_between(generation[1:], min_mutation_step[1:], max_mutation_step[1:], alpha = 0.1)
         ax.set_xticks(generation, generation)
     ax.legend(loc="upper left")
