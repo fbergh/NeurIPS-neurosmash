@@ -154,6 +154,7 @@ def plot_action_proportions(action_data, agent_type=""):
     ax.set_xlabel("Generation")
     ax.set_ylabel("Action Proportions")
     ax.set_xticks(generation, generation)
+    ax.set_ylim([0,1])
     fig.savefig(os.path.join(PLOT_LOCATION, f"action_proportions{'_' if agent_type else ''}{agent_type if agent_type else ''}.png"))
 
 
