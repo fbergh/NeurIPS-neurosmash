@@ -55,7 +55,7 @@ def plot_average_wins_comparison(win_data):
     ax.set_ylabel("Average #Wins")
     labels = ["Random", "Dense", "Convolutional"]
     for i, data in enumerate(win_data):
-        generation, average_wins = win_data
+        generation, average_wins = data
         ax.plot(generation, average_wins, label = labels[i])
         ax.set_xticks(generation, generation)
     ax.legend(loc="upper left")
@@ -96,6 +96,6 @@ if __name__ == "__main__":
 
     plot_average_rewards_comparison(reward_data)
     plot_cumulative_rewards_comparison(reward_data)
-    plot_cumulative_rewards_comparison(win_data)
     plot_action_proportions_comparison(action_data)
     plot_mutation_steps_comparison(mutation_data)
+    plot_average_wins_comparison(win_data)
