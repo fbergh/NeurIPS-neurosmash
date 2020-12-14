@@ -47,6 +47,21 @@ def plot_cumulative_rewards_comparison(reward_data):
     ax.grid()
     fig.savefig(os.path.join(PLOT_LOCATION, "cumulative_rewards_comparison.png"))
 
+def plot_average_wins_comparison(win_data):
+    """ Plot the average number of wins per generation """
+    plt.figure()
+    fig, ax = plt.subplots()
+    ax.set_xlabel("Generation")
+    ax.set_ylabel("Average #Wins")
+    labels = ["Random", "Dense", "Convolutional"]
+    for i, data in enumerate(win_data):
+        generation, average_wins = win_data
+        ax.plot(generation, average_wins, label = labels[i])
+        ax.set_xticks(generation, generation)
+    ax.legend(loc="upper left")
+    ax.grid()
+    fig.savefig(os.path.join(PLOT_LOCATION, "average_wins_comparisons.png"))
+
 def plot_action_proportions_comparison(action_data):
     """ Plot action proportions for all agent types (in separate plots) """
     labels = ["Random", "Dense", "Convolutional"]
@@ -81,5 +96,6 @@ if __name__ == "__main__":
 
     plot_average_rewards_comparison(reward_data)
     plot_cumulative_rewards_comparison(reward_data)
+    plot_cumulative_rewards_comparison(win_data)
     plot_action_proportions_comparison(action_data)
     plot_mutation_steps_comparison(mutation_data)
